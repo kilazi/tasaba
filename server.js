@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const multer = require('multer');
+const PDFDocument = require('pdfkit');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -202,6 +203,16 @@ app.get('/', (req, res) => {
   res.render('home', { neighborhoods, avgPrice, totalInventory, fmt, lastUpdated: neighborhoodData.lastUpdated });
 });
 
+// Pricing page
+app.get('/precios', (req, res) => {
+  res.render('pricing');
+});
+
+// Ranking page
+app.get('/ranking', (req, res) => {
+  res.render('ranking', { neighborhoods, byPrice, byGrowth, fmt, lastUpdated: neighborhoodData.lastUpdated });
+});
+
 // AI Evaluation tool
 app.get('/evaluar', (req, res) => {
   res.render('evaluate', { neighborhoods, fmt });
@@ -348,12 +359,171 @@ app.get('/barrio/:slug', (req, res) => {
   res.render('neighborhood', { n, rank, growthRank, total: neighborhoods.length, similar, fmt, lastUpdated: neighborhoodData.lastUpdated });
 });
 
+// PDF report download
+app.get('/api/report/:evalId/pdf', (req, res) => {
+  const evalsFile = path.join(__dirname, 'data/evaluations.json');
+  let evals = {};
+  try { evals = JSON.parse(fs.readFileSync(evalsFile, 'utf8')); } catch(e) {}
+  const evaluation = evals[req.params.evalId];
+  if (!evaluation) return res.status(404).json({ error: 'Evaluacion no encontrada' });
+
+  const r = evaluation.fullReport;
+  const s = r.strategy;
+
+  const doc = new PDFDocument({ size: 'A4', margin: 50 });
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename=TasaBA-Informe-${req.params.evalId}.pdf`);
+  doc.pipe(res);
+
+  // Header
+  doc.fontSize(24).font('Helvetica-Bold').fillColor('#1a365d').text('TasaBA', { continued: true });
+  doc.fontSize(10).font('Helvetica').fillColor('#999').text('  Informe de valuacion', { align: 'left' });
+  doc.moveDown(0.5);
+  doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#e5e5e7').stroke();
+  doc.moveDown(0.5);
+
+  // Property info
+  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`${r.neighborhood} — ${r.zone} — ${r.m2}m2 — ${new Date().toLocaleDateString('es-AR')}`);
+  doc.moveDown(1);
+
+  // Valuation
+  doc.fontSize(28).font('Helvetica-Bold').fillColor('#1a365d').text(`USD $${fmt(r.estimatedPrice)}`);
+  doc.fontSize(12).font('Helvetica').fillColor('#999').text(`Rango: $${fmt(r.priceRange.low)} — $${fmt(r.priceRange.high)}`);
+  doc.moveDown(0.5);
+
+  // Key metrics
+  const metrics = [
+    ['Demanda', `${s.demandScore}/100`],
+    ['Mercado', s.marketTiming],
+    ['Tiempo est. venta', s.timeToSell],
+    ['Tendencia anual', `+${r.trend}%`],
+    ['Precio/m2', `$${fmt(r.pricePerM2)}`],
+    ['Ranking CABA', `#${r.rank} de ${r.totalBarrios}`]
+  ];
+  doc.moveDown(0.5);
+  metrics.forEach(([label, val]) => {
+    doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(label, { continued: true, width: 200 });
+    doc.font('Helvetica-Bold').fillColor('#1a1a1a').text(`  ${val}`);
+  });
+
+  // AI Summary
+  if (r.summary) {
+    doc.moveDown(1);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('RESUMEN IA');
+    doc.moveDown(0.3);
+    doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(r.summary, { lineGap: 3 });
+  }
+
+  // Strategy: Sell vs Wait
+  doc.moveDown(1);
+  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('VENDER AHORA VS ESPERAR');
+  doc.moveDown(0.3);
+  doc.fontSize(10).font('Helvetica-Bold').fillColor('#16a34a').text(s.sellVsWait.recommendation);
+  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.sellVsWait.reason, { lineGap: 3 });
+  doc.moveDown(0.3);
+  doc.font('Helvetica').fillColor('#6b6b6b')
+    .text(`Proyeccion 2027: $${fmt(s.sellVsWait.projected1yr)} (+$${fmt(s.sellVsWait.waitGain1yr)})`)
+    .text(`Proyeccion 2029: $${fmt(s.sellVsWait.projected3yr)} (+$${fmt(s.sellVsWait.waitGain3yr)})`)
+    .text(`Proyeccion 2031: $${fmt(s.sellVsWait.projected5yr)} (+$${fmt(s.sellVsWait.projected5yr - r.estimatedPrice)})`);
+
+  // Strategy: Renovation
+  doc.moveDown(1);
+  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('RENOVAR VS VENDER ASI');
+  doc.moveDown(0.3);
+  doc.fontSize(10).font('Helvetica-Bold').fillColor('#16a34a').text(s.renovationAdvice.recommendation);
+  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.renovationAdvice.reason, { lineGap: 3 });
+  doc.moveDown(0.3);
+  doc.font('Helvetica').fillColor('#6b6b6b')
+    .text(`Costo estimado: $${fmt(s.renovationAdvice.estimatedCost)}`)
+    .text(`Aumento valor: +$${fmt(s.renovationAdvice.estimatedValueIncrease)}`)
+    .text(`ROI: ${s.renovationAdvice.roi}%`);
+
+  // Strategy: Rent Analysis
+  doc.addPage();
+  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('VENDER VS ALQUILAR');
+  doc.moveDown(0.3);
+  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.rentAnalysis.verdict, { lineGap: 3 });
+  doc.moveDown(0.5);
+
+  // Rent comparison table
+  const rentData = [
+    ['', 'Vender', 'Temp.', 'Tradicional'],
+    ['Capital/Ingreso', `$${fmt(s.rentAnalysis.sell.immediateCapital)}`, `$${fmt(s.rentAnalysis.shortTerm.monthlyEstimate)}/m`, `$${fmt(s.rentAnalysis.longTerm.monthlyEstimate)}/m`],
+    ['Ingreso neto anual', `$${fmt(s.rentAnalysis.sell.annualPassiveIncome)}`, `$${fmt(s.rentAnalysis.shortTerm.annualNet)}`, `$${fmt(s.rentAnalysis.longTerm.annualNet)}`],
+    ['Rendimiento', '5.5%', `${s.rentAnalysis.shortTerm.netYield}%`, `${s.rentAnalysis.longTerm.netYield}%`]
+  ];
+  rentData.forEach((row, i) => {
+    const y = doc.y;
+    const isHeader = i === 0;
+    row.forEach((cell, j) => {
+      const x = 50 + j * 125;
+      doc.fontSize(9).font(isHeader ? 'Helvetica-Bold' : 'Helvetica').fillColor(isHeader ? '#1a365d' : '#6b6b6b').text(cell, x, y, { width: 120 });
+    });
+    doc.moveDown(0.6);
+  });
+
+  // AI Features
+  if (r.features && r.features.length) {
+    doc.moveDown(0.5);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('CARACTERISTICAS IA');
+    doc.moveDown(0.3);
+    doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(r.features.join(', '), { lineGap: 3 });
+  }
+
+  if (r.positives && r.positives.length) {
+    doc.moveDown(0.5);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('ASPECTOS POSITIVOS');
+    doc.moveDown(0.3);
+    r.positives.forEach(p => doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`+ ${p}`));
+  }
+
+  if (r.negatives && r.negatives.length) {
+    doc.moveDown(0.5);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('ASPECTOS A CONSIDERAR');
+    doc.moveDown(0.3);
+    r.negatives.forEach(n => doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`- ${n}`));
+  }
+
+  // Market insight
+  doc.moveDown(1);
+  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('INSIGHT DE MERCADO');
+  doc.moveDown(0.3);
+  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.marketInsight, { lineGap: 3 });
+  doc.moveDown(0.3);
+  doc.text(`Comprador objetivo: ${s.targetBuyer}`);
+  doc.text(`Margen de negociacion: ${s.negotiationMargin}`);
+
+  // Similar neighborhoods
+  if (r.similarBarrios && r.similarBarrios.length) {
+    doc.moveDown(0.5);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('BARRIOS SIMILARES');
+    doc.moveDown(0.3);
+    r.similarBarrios.forEach(sb => {
+      doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`${sb.name}: $${fmt(sb.pricePerM2)}/m2 (tendencia +${sb.trend}%)`);
+    });
+  }
+
+  // Disclaimer
+  doc.moveDown(1.5);
+  doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#e5e5e7').stroke();
+  doc.moveDown(0.5);
+  doc.fontSize(8).font('Helvetica').fillColor('#999').text(
+    'Este informe es una estimacion generada por inteligencia artificial basada en datos de mercado publicos. No constituye una tasacion formal ni reemplaza la evaluacion de un profesional matriculado. Los valores son orientativos. Fuentes: ZonaProp, Argenprop, IDECBA.',
+    { lineGap: 2, align: 'center' }
+  );
+  doc.moveDown(0.3);
+  doc.fontSize(8).font('Helvetica').fillColor('#1a365d').text('TasaBA — tasaba-473141067823.us-central1.run.app', { align: 'center' });
+
+  doc.end();
+});
+
 // Sitemap
 app.get('/sitemap.xml', (req, res) => {
   const base = 'https://tasaba-473141067823.us-central1.run.app';
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   xml += `<url><loc>${base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n`;
   xml += `<url><loc>${base}/evaluar</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>\n`;
+  xml += `<url><loc>${base}/precios</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n`;
   neighborhoods.forEach(n => {
     xml += `<url><loc>${base}/barrio/${n.slug}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>\n`;
   });

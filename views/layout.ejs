@@ -8,6 +8,7 @@
   <link rel="canonical" href="<%= typeof canonical !== 'undefined' ? canonical : 'https://tasaba-473141067823.us-central1.run.app' %>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><path d='M6 18l10-10 10 10' stroke='white' stroke-width='2.5' fill='none'/><rect x='12' y='16' width='8' height='10' rx='1' fill='white' opacity='.9'/><rect x='14' y='18' width='4' height='4' rx='.5' fill='%231a365d'/></svg>">
   <link rel="stylesheet" href="/css/style.css">
   <% if (typeof structured !== 'undefined' && structured) { %>
   <script type="application/ld+json"><%- JSON.stringify(structured) %></script>
@@ -16,11 +17,20 @@
 <body>
   <nav class="nav">
     <div class="nav-inner">
-      <a href="/" class="nav-brand">TasaBA <span>by Spawn</span></a>
+      <a href="/" class="nav-brand">
+        <svg class="nav-logo" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#1a365d"/>
+          <path d="M6 18l10-10 10 10" stroke="white" stroke-width="2.5" fill="none"/>
+          <rect x="12" y="16" width="8" height="10" rx="1" fill="white" opacity=".9"/>
+          <rect x="14" y="18" width="4" height="4" rx=".5" fill="#1a365d"/>
+        </svg>
+        TasaBA
+      </a>
       <div class="nav-links">
         <a href="/">Barrios</a>
         <a href="/ranking">Ranking</a>
-        <a href="/tasar">Tasar</a>
+        <a href="/precios">Precios</a>
+        <a href="/evaluar" class="btn btn-primary btn-sm">Evaluar</a>
       </div>
     </div>
   </nav>
