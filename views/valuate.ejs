@@ -1,0 +1,81 @@
+<%
+const selectedSlug = typeof n !== 'undefined' && n ? n.slug : '';
+const sqm = typeof m2 !== 'undefined' ? m2 : 45;
+const typ = typeof typology !== 'undefined' ? typology : 'dosAmbientes';
+const typLabel = typ === 'monoambiente' ? 'monoambiente' : typ === 'tresAmbientes' ? '3 ambientes' : '2 ambientes';
+%>
+<%- include('layout', {
+  title: 'Tasar propiedad',
+  description: 'Herramienta gratuita de tasacion inmobiliaria para Buenos Aires. Estima el valor de tu departamento por barrio, superficie y tipologia.',
+  lastUpdated: '2026-03-03',
+  canonical: 'https://tasaba-473141067823.us-central1.run.app/tasar',
+  body: `
+
+<section class="section">
+  <div class="container" style="max-width:680px">
+    <h1 style="font-size:32px;font-weight:700;margin-bottom:8px">Tasar mi propiedad</h1>
+    <p style="color:var(--text-secondary);margin-bottom:32px">
+      Estimacion basada en datos actuales del mercado inmobiliario de Buenos Aires.
+    </p>
+
+    <form method="POST" action="/tasar" class="card" style="margin-bottom:24px">
+      <div class="form-group">
+        <label class="form-label">Barrio</label>
+        <select class="form-select" name="neighborhood" required>
+          <option value="">Seleccionar barrio</option>
+          ${neighborhoods.map(nb => `<option value="${nb.slug}" ${nb.slug === selectedSlug ? 'selected' : ''}>${nb.name} — $${fmt(nb.pricePerM2.avg)}/m2</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Superficie (m2)</label>
+          <input class="form-input" name="m2" type="number" min="15" max="500" value="${sqm}" required placeholder="45">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipologia</label>
+          <select class="form-select" name="typology">
+            <option value="monoambiente" ${typ === 'monoambiente' ? 'selected' : ''}>Monoambiente</option>
+            <option value="dosAmbientes" ${typ === 'dosAmbientes' ? 'selected' : ''}>2 ambientes</option>
+            <option value="tresAmbientes" ${typ === 'tresAmbientes' ? 'selected' : ''}>3 ambientes</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px">Calcular valuacion</button>
+    </form>
+
+    ${result ? `
+    <div class="valuation-result">
+      <h3>Valuacion estimada en ${selectedSlug ? n.name : ''}</h3>
+      <div class="valuation-price">$${fmt(result.mid)}</div>
+      <div class="valuation-range">
+        <div>Minimo: <strong>$${fmt(result.low)}</strong></div>
+        <div>Maximo: <strong>$${fmt(result.high)}</strong></div>
+      </div>
+      <div style="margin-top:16px;font-size:13px;opacity:0.7">
+        Basado en $${fmt(result.pricePerM2)} USD/m2 para ${typLabel} en ${selectedSlug ? n.name : ''}
+      </div>
+    </div>
+
+    <div style="margin-top:24px;text-align:center">
+      <p style="color:var(--text-secondary);font-size:14px;margin-bottom:12px">
+        Esta es una estimacion automatica. Para una tasacion profesional personalizada:
+      </p>
+      <a href="${selectedSlug ? '/barrio/' + n.slug : '/'}" class="btn btn-secondary">Ver informe completo de ${selectedSlug ? n.name : 'barrio'}</a>
+    </div>
+    ` : ''}
+
+    <div style="margin-top:40px;padding:24px;background:var(--surface-alt);border-radius:var(--radius)">
+      <h3 style="font-size:16px;font-weight:600;margin-bottom:8px">Como funciona</h3>
+      <p style="font-size:14px;color:var(--text-secondary);line-height:1.6">
+        Nuestra herramienta analiza los datos de mercado actuales de Buenos Aires,
+        incluyendo listados activos en los principales portales inmobiliarios,
+        datos oficiales del gobierno de la ciudad, e indicadores de tendencia.
+        La valuacion se calcula en base al precio promedio por metro cuadrado
+        para la tipologia y barrio seleccionado, ajustado por el rango de precios
+        observado en el mercado.
+      </p>
+    </div>
+  </div>
+</section>
+
+` }) %>

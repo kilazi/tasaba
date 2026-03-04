@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluar propiedad — TasaBA</title>
+  <meta name="description" content="Subi fotos de tu propiedad y recibe una valuacion con inteligencia artificial. Gratis, rapido y basado en datos de mercado actuales.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">TasaBA</a>
+    <div class="nav-links">
+      <a href="/">Inicio</a>
+    </div>
+  </div>
+</nav>
+
+<section class="section" style="padding-top:40px">
+  <div class="container" style="max-width:760px">
+
+    <!-- Step 1: Input form -->
+    <div id="step-input">
+      <h1 style="font-size:28px;font-weight:700;margin-bottom:6px">Evaluar propiedad</h1>
+      <p style="color:var(--text-secondary);margin-bottom:32px">Subi fotos y completa los datos. La IA analiza todo en menos de un minuto.</p>
+
+      <form id="evalForm" enctype="multipart/form-data">
+        <!-- Photos -->
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display:none">
+          <div class="upload-content" id="uploadContent">
+            <svg width="40" height="40" fill="none" stroke="var(--text-muted)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <p style="margin-top:12px;font-weight:600">Arrastra fotos o hace click para subir</p>
+            <p style="font-size:13px;color:var(--text-muted)">Interior: living, cocina, bano, dormitorio. Hasta 5 fotos.</p>
+          </div>
+          <div id="photoPreview" class="photo-preview" style="display:none"></div>
+        </div>
+
+        <!-- Property details -->
+        <div style="margin-top:24px">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Barrio</label>
+              <select class="form-select" name="neighborhood" required>
+                <option value="">Seleccionar</option>
+                <% neighborhoods.forEach(n => { %>
+                <option value="<%= n.slug %>"><%= n.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Superficie (m2)</label>
+              <input class="form-input" name="m2" type="number" min="15" max="500" value="45" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Tipologia</label>
+              <select class="form-select" name="typology">
+                <option value="monoambiente">Monoambiente</option>
+                <option value="dosAmbientes" selected>2 ambientes</option>
+                <option value="tresAmbientes">3 ambientes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Piso (opcional)</label>
+              <input class="form-input" name="floor" type="text" placeholder="Ej: 8">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amenities (opcional)</label>
+            <input class="form-input" name="amenities" type="text" placeholder="Ej: balcon, cochera, pileta, SUM, laundry">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px" id="evalBtn">
+          Evaluar propiedad
+        </button>
+        <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px">
+          Las fotos no se almacenan. Solo se usan para el analisis.
+        </p>
+      </form>
+    </div>
+
+    <!-- Step 2: Loading -->
+    <div id="step-loading" style="display:none;text-align:center;padding:80px 0">
+      <div class="loader"></div>
+      <h2 style="margin-top:24px;font-size:20px">Analizando tu propiedad...</h2>
+      <p style="color:var(--text-secondary);margin-top:8px">La IA esta evaluando las fotos y cruzando datos de mercado.</p>
+      <div style="margin-top:32px;text-align:left;max-width:320px;margin-left:auto;margin-right:auto">
+        <div class="loading-step active" id="ls-1"><span class="loading-dot"></span> Procesando imagenes...</div>
+        <div class="loading-step" id="ls-2"><span class="loading-dot"></span> Analizando condicion y estilo</div>
+        <div class="loading-step" id="ls-3"><span class="loading-dot"></span> Cruzando datos de mercado</div>
+        <div class="loading-step" id="ls-4"><span class="loading-dot"></span> Generando estrategia de venta</div>
+        <div class="loading-step" id="ls-5"><span class="loading-dot"></span> Preparando informe</div>
+      </div>
+    </div>
+
+    <!-- Step 3: Teaser result -->
+    <div id="step-teaser" style="display:none">
+      <div class="teaser-result">
+        <div class="teaser-header">
+          <h2>Valuacion estimada</h2>
+          <div class="teaser-neighborhood" id="teaser-neighborhood"></div>
+        </div>
+
+        <div class="teaser-price-box">
+          <div class="teaser-price" id="teaser-price"></div>
+          <div class="teaser-range" id="teaser-range"></div>
+        </div>
+
+        <div class="teaser-details" id="teaser-details"></div>
+
+        <!-- Blurred gate — report content -->
+        <div class="gate-section">
+          <div class="gate-blur">
+            <div class="gate-fake-row"><strong>Estrategia:</strong> Vender ahora vs esperar — analisis de mercado con proyeccion a 1, 3 y 5 anos</div>
+            <div class="gate-fake-row"><strong>Analisis:</strong> Vender vs alquiler temporario vs alquiler tradicional — rendimiento comparado</div>
+            <div class="gate-fake-row"><strong>Renovacion:</strong> Renovar vs vender asi — ROI estimado por tipo de mejora</div>
+            <div class="gate-fake-row"><strong>IA:</strong> Evaluacion detallada de condicion, terminaciones, positivos y negativos</div>
+            <div class="gate-fake-row"><strong>Mercado:</strong> Ranking del barrio, comparacion con 3 barrios similares, insight competitivo</div>
+            <div class="gate-fake-row"><strong>Perfil:</strong> Comprador objetivo identificado, tiempo estimado de venta, margen de negociacion</div>
+          </div>
+          <div class="gate-overlay">
+            <h3>Informe completo</h3>
+            <p>Dejanos tu contacto para recibir el analisis completo con estrategia de venta, proyecciones y recomendaciones de la IA.</p>
+            <form id="unlockForm">
+              <input type="hidden" name="evalId" id="evalId">
+              <div class="form-group">
+                <input class="form-input" name="name" placeholder="Tu nombre" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <input class="form-input" name="whatsapp" placeholder="WhatsApp (ej: 11-XXXX-XXXX)">
+                </div>
+                <div class="form-group">
+                  <input class="form-input" name="email" type="email" placeholder="Email">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Recibir informe completo</button>
+              <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:6px">Te lo enviamos al instante. Sin spam.</p>
+            </form>
+          </div>
+        </div>
+
+        <!-- Premium features teaser -->
+        <div class="premium-teaser">
+          <div class="premium-header">
+            <span class="premium-badge">Proximamente</span>
+            <h3>TasaBA Premium</h3>
+          </div>
+          <div class="premium-features">
+            <div class="premium-feature">
+              <div class="premium-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div>
+                <strong>Inmobiliarias sugeridas</strong>
+                <p>Las 3 mejores inmobiliarias de tu zona con historial de ventas y comisiones</p>
+              </div>
+            </div>
+            <div class="premium-feature">
+              <div class="premium-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </div>
+              <div>
+                <strong>Pack de fotos profesionales con IA</strong>
+                <p>Mejoramos tus fotos automaticamente: iluminacion, colores, staging virtual</p>
+              </div>
+            </div>
+            <div class="premium-feature">
+              <div class="premium-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <div>
+                <strong>Recepcionista IA</strong>
+                <p>Un asistente que responde llamadas y mensajes de compradores interesados 24/7</p>
+              </div>
+            </div>
+            <div class="premium-feature">
+              <div class="premium-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div>
+                <strong>Monitoreo de mercado</strong>
+                <p>Alertas cuando cambia el precio en tu barrio o aparece competencia similar</p>
+              </div>
+            </div>
+          </div>
+          <form id="waitlistForm" class="premium-waitlist">
+            <input class="form-input" name="waitlist_email" type="email" placeholder="Tu email para la lista de espera">
+            <button type="submit" class="btn btn-outline btn-sm">Sumarme a la lista</button>
+          </form>
+          <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:6px">Seras de los primeros en acceder cuando lancemos Premium.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:24px">
+        <a href="/evaluar" class="btn btn-outline">Evaluar otra propiedad</a>
+      </div>
+    </div>
+
+    <!-- Step 4: Full report unlocked -->
+    <div id="step-full" style="display:none">
+      <div class="full-report" id="full-report"></div>
+
+      <!-- Premium teaser after full report too -->
+      <div class="premium-teaser" style="margin-top:20px">
+        <div class="premium-header">
+          <span class="premium-badge">Proximamente</span>
+          <h3>TasaBA Premium</h3>
+        </div>
+        <div class="premium-features">
+          <div class="premium-feature">
+            <div class="premium-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div>
+              <strong>Inmobiliarias sugeridas para tu zona</strong>
+              <p>Las 3 mejores con historial de ventas y comisiones</p>
+            </div>
+          </div>
+          <div class="premium-feature">
+            <div class="premium-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <div>
+              <strong>Pack de fotos mejoradas con IA</strong>
+              <p>Staging virtual, iluminacion optimizada, fotos listas para publicar</p>
+            </div>
+          </div>
+          <div class="premium-feature">
+            <div class="premium-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <div>
+              <strong>Recepcionista IA 24/7</strong>
+              <p>Responde consultas de compradores por WhatsApp y telefono</p>
+            </div>
+          </div>
+        </div>
+        <form class="premium-waitlist" onsubmit="event.preventDefault();saveWaitlist(this);showToast('Te sumamos a la lista. Te avisamos cuando lance!');">
+          <input class="form-input" name="waitlist_email" type="email" placeholder="Tu email para la lista de espera">
+          <button type="submit" class="btn btn-outline btn-sm">Sumarme</button>
+        </form>
+      </div>
+
+      <div style="text-align:center;margin-top:24px">
+        <a href="/evaluar" class="btn btn-primary">Evaluar otra propiedad</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const fmt = n => n.toLocaleString('en-US');
+
+// Photo upload
+const zone = document.getElementById('uploadZone');
+const input = document.getElementById('photoInput');
+const preview = document.getElementById('photoPreview');
+const content = document.getElementById('uploadContent');
+let selectedFiles = [];
+
+zone.addEventListener('click', () => input.click());
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+});
+input.addEventListener('change', () => handleFiles(input.files));
+
+function handleFiles(files) {
+  const arr = Array.from(files).filter(f => f.type.startsWith('image/')).slice(0, 5);
+  if (!arr.length) return;
+  selectedFiles = arr;
+  content.style.display = 'none';
+  preview.style.display = 'flex';
+  preview.innerHTML = '';
+  arr.forEach((f, i) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.innerHTML = `<img src="${e.target.result}"><button type="button" onclick="removePhoto(${i})" class="photo-remove">x</button>`;
+      preview.appendChild(div);
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function removePhoto(i) {
+  selectedFiles.splice(i, 1);
+  if (!selectedFiles.length) {
+    content.style.display = '';
+    preview.style.display = 'none';
+  } else {
+    handleFiles(selectedFiles);
+  }
+}
+
+// Loading animation
+function animateLoading() {
+  const steps = ['ls-1','ls-2','ls-3','ls-4','ls-5'];
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i > 0) document.getElementById(steps[i-1]).classList.add('done');
+    if (i < steps.length) document.getElementById(steps[i]).classList.add('active');
+    i++;
+    if (i > steps.length) clearInterval(iv);
+  }, 1200);
+  return iv;
+}
+
+// Submit evaluation
+document.getElementById('evalForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.target;
+  const fd = new FormData(form);
+
+  fd.delete('photos');
+  selectedFiles.forEach(f => fd.append('photos', f));
+
+  document.getElementById('step-input').style.display = 'none';
+  document.getElementById('step-loading').style.display = '';
+  const loadingIv = animateLoading();
+
+  try {
+    const res = await fetch('/api/evaluate', { method: 'POST', body: fd });
+    const data = await res.json();
+    clearInterval(loadingIv);
+    if (!data.ok) throw new Error(data.error);
+    showTeaser(data);
+  } catch(err) {
+    clearInterval(loadingIv);
+    showToast('Error: ' + err.message);
+    document.getElementById('step-loading').style.display = 'none';
+    document.getElementById('step-input').style.display = '';
+  }
+});
+
+function showTeaser(data) {
+  document.getElementById('step-loading').style.display = 'none';
+  document.getElementById('step-teaser').style.display = '';
+
+  const t = data.teaser;
+  document.getElementById('teaser-neighborhood').textContent = t.neighborhood + ' — ' + t.zone;
+  document.getElementById('teaser-price').textContent = 'USD $' + fmt(t.estimatedPrice);
+  document.getElementById('teaser-range').innerHTML = `<span>$${fmt(t.priceRange.low)}</span> — <span>$${fmt(t.priceRange.high)}</span>`;
+  document.getElementById('evalId').value = data.evalId;
+
+  let details = '';
+  details += `<div class="teaser-detail-row"><span>Promedio del barrio</span><strong>$${fmt(t.neighborhoodAvg)}/m2</strong></div>`;
+  details += `<div class="teaser-detail-row"><span>Tendencia anual</span><strong class="trend-up">+${t.trend}%</strong></div>`;
+  details += `<div class="teaser-detail-row"><span>Mercado</span><strong>${t.marketTiming}</strong></div>`;
+  details += `<div class="teaser-detail-row"><span>Demanda</span><strong>${t.demandScore}/100</strong></div>`;
+  details += `<div class="teaser-detail-row"><span>Tiempo est. de venta</span><strong>${t.timeToSell}</strong></div>`;
+  details += `<div class="teaser-detail-row"><span>Recomendacion</span><strong style="color:var(--accent)">${t.sellRecommendation}</strong></div>`;
+  if (t.condition) details += `<div class="teaser-detail-row"><span>Condicion (IA)</span><strong>${t.condition}</strong></div>`;
+  if (t.style) details += `<div class="teaser-detail-row"><span>Estilo (IA)</span><strong>${t.style}</strong></div>`;
+  if (t.adjustment) details += `<div class="teaser-detail-row"><span>Ajuste por condicion</span><strong>${t.adjustment > 0 ? '+' : ''}${t.adjustment}%</strong></div>`;
+  document.getElementById('teaser-details').innerHTML = details;
+}
+
+// Unlock full report
+document.getElementById('unlockForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = Object.fromEntries(new FormData(e.target));
+  if (!fd.whatsapp && !fd.email) { showToast('Ingresa WhatsApp o email'); return; }
+
+  const btn = e.target.querySelector('button');
+  btn.textContent = 'Generando...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/unlock', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fd)
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    showFullReport(data.report);
+  } catch(err) {
+    showToast('Error: ' + err.message);
+    btn.textContent = 'Recibir informe completo';
+    btn.disabled = false;
+  }
+});
+
+function showFullReport(r) {
+  document.getElementById('step-teaser').style.display = 'none';
+  document.getElementById('step-full').style.display = '';
+  const s = r.strategy;
+
+  let html = `
+    <div class="full-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <h2>Informe completo</h2>
+          <div style="color:var(--text-secondary)">${r.neighborhood} — ${r.zone} — ${r.m2}m2</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Generado por IA</div>
+          <div style="font-size:11px;color:var(--text-muted)">${new Date().toLocaleDateString('es-AR')}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teaser-price-box" style="margin:0;padding:28px;border-bottom:1px solid var(--border-light)">
+      <div class="teaser-price">USD $${fmt(r.estimatedPrice)}</div>
+      <div class="teaser-range"><span>$${fmt(r.priceRange.low)}</span> — <span>$${fmt(r.priceRange.high)}</span></div>
+      <div style="display:flex;gap:20px;justify-content:center;margin-top:16px">
+        <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--accent)">${s.demandScore}/100</div><div style="font-size:11px;color:var(--text-muted)">Demanda</div></div>
+        <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--green)">${s.marketTiming}</div><div style="font-size:11px;color:var(--text-muted)">Mercado</div></div>
+        <div style="text-align:center"><div style="font-size:22px;font-weight:700">${s.timeToSell}</div><div style="font-size:11px;color:var(--text-muted)">Tiempo est.</div></div>
+      </div>
+    </div>`;
+
+  // AI Summary
+  if (r.summary) {
+    html += `<div class="full-section"><h3>Resumen de la IA</h3><p>${r.summary}</p></div>`;
+  }
+
+  // SELL VS WAIT
+  html += `<div class="full-section">
+    <h3>Vender ahora vs esperar</h3>
+    <div class="strategy-recommendation">
+      <div class="strategy-badge ${s.sellVsWait.confidence === 'Alta' ? 'high' : 'med'}">${s.sellVsWait.recommendation}</div>
+      <span class="strategy-confidence">Confianza: ${s.sellVsWait.confidence}</span>
+    </div>
+    <p style="margin:12px 0">${s.sellVsWait.reason}</p>
+    <div class="projection-grid">
+      <div class="projection-card">
+        <div class="projection-year">2027</div>
+        <div class="projection-price">$${fmt(s.sellVsWait.projected1yr)}</div>
+        <div class="projection-gain">+$${fmt(s.sellVsWait.waitGain1yr)}</div>
+      </div>
+      <div class="projection-card">
+        <div class="projection-year">2029</div>
+        <div class="projection-price">$${fmt(s.sellVsWait.projected3yr)}</div>
+        <div class="projection-gain">+$${fmt(s.sellVsWait.waitGain3yr)}</div>
+      </div>
+      <div class="projection-card">
+        <div class="projection-year">2031</div>
+        <div class="projection-price">$${fmt(s.sellVsWait.projected5yr)}</div>
+        <div class="projection-gain">+$${fmt(s.sellVsWait.projected5yr - r.estimatedPrice)}</div>
+      </div>
+    </div>
+  </div>`;
+
+  // RENOVATE VS SELL AS-IS
+  html += `<div class="full-section">
+    <h3>Renovar vs vender asi</h3>
+    <div class="strategy-recommendation">
+      <div class="strategy-badge ${s.renovationAdvice.confidence === 'Alta' ? 'high' : 'med'}">${s.renovationAdvice.recommendation}</div>
+      <span class="strategy-confidence">Confianza: ${s.renovationAdvice.confidence}</span>
+    </div>
+    <p style="margin:12px 0">${s.renovationAdvice.reason}</p>
+    ${r.renovationNotes ? `<p style="margin:8px 0;font-style:italic;color:var(--text-secondary)">IA: ${r.renovationNotes}</p>` : ''}
+    <div style="margin-top:16px">
+      <div class="teaser-detail-row"><span>Costo estimado de renovacion</span><strong>$${fmt(s.renovationAdvice.estimatedCost)}</strong></div>
+      <div class="teaser-detail-row"><span>Aumento estimado de valor</span><strong class="trend-up">+$${fmt(s.renovationAdvice.estimatedValueIncrease)}</strong></div>
+      <div class="teaser-detail-row"><span>ROI estimado</span><strong class="trend-up">${s.renovationAdvice.roi}%</strong></div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Mejoras rapidas con mayor impacto:</div>
+      ${s.renovationAdvice.quickWins.map(q => `
+        <div class="quick-win-row">
+          <span>${q.item}</span>
+          <span style="color:var(--text-muted)">~$${fmt(q.cost)}</span>
+          <strong class="trend-up">${q.impact}</strong>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+
+  // SELL VS RENT
+  html += `<div class="full-section">
+    <h3>Vender vs alquilar</h3>
+    <p style="margin-bottom:16px">${s.rentAnalysis.verdict}</p>
+    <div class="rent-comparison">
+      <div class="rent-option">
+        <div class="rent-option-header sell-header">Vender</div>
+        <div class="rent-option-body">
+          <div class="rent-big-number">$${fmt(s.rentAnalysis.sell.immediateCapital)}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Capital inmediato</div>
+          <div class="rent-detail"><span>Rendimiento reinversion</span><strong>${s.rentAnalysis.sell.reinvestmentYield}</strong></div>
+          <div class="rent-detail"><span>Ingreso pasivo anual</span><strong>$${fmt(s.rentAnalysis.sell.annualPassiveIncome)}</strong></div>
+          <div style="margin-top:10px">
+            ${s.rentAnalysis.sell.pros.map(p => `<div class="rent-pro">+ ${p}</div>`).join('')}
+            ${s.rentAnalysis.sell.cons.map(c => `<div class="rent-con">- ${c}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="rent-option">
+        <div class="rent-option-header short-header">Alquiler temporario</div>
+        <div class="rent-option-body">
+          <div class="rent-big-number">$${fmt(s.rentAnalysis.shortTerm.monthlyEstimate)}/mes</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Estimado promedio</div>
+          <div class="rent-detail"><span>Ocupacion estimada</span><strong>${s.rentAnalysis.shortTerm.occupancyRate}</strong></div>
+          <div class="rent-detail"><span>Ingreso neto anual</span><strong>$${fmt(s.rentAnalysis.shortTerm.annualNet)}</strong></div>
+          <div class="rent-detail"><span>Rendimiento neto</span><strong>${s.rentAnalysis.shortTerm.netYield}%</strong></div>
+          <div style="margin-top:10px">
+            ${s.rentAnalysis.shortTerm.pros.map(p => `<div class="rent-pro">+ ${p}</div>`).join('')}
+            ${s.rentAnalysis.shortTerm.cons.map(c => `<div class="rent-con">- ${c}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="rent-option">
+        <div class="rent-option-header long-header">Alquiler tradicional</div>
+        <div class="rent-option-body">
+          <div class="rent-big-number">$${fmt(s.rentAnalysis.longTerm.monthlyEstimate)}/mes</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Contrato 2-3 anos</div>
+          <div class="rent-detail"><span>Ingreso neto anual</span><strong>$${fmt(s.rentAnalysis.longTerm.annualNet)}</strong></div>
+          <div class="rent-detail"><span>Rendimiento neto</span><strong>${s.rentAnalysis.longTerm.netYield}%</strong></div>
+          <div class="rent-detail"><span>Recupero inversion</span><strong>${s.rentAnalysis.breakEvenYears} anos</strong></div>
+          <div style="margin-top:10px">
+            ${s.rentAnalysis.longTerm.pros.map(p => `<div class="rent-pro">+ ${p}</div>`).join('')}
+            ${s.rentAnalysis.longTerm.cons.map(c => `<div class="rent-con">- ${c}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  // AI ANALYSIS (if photos)
+  if (r.features && r.features.length) {
+    html += `<div class="full-section"><h3>Caracteristicas detectadas por la IA</h3><div class="full-tags">${r.features.map(f => `<span class="tag">${f}</span>`).join('')}</div></div>`;
+  }
+  if (r.positives && r.positives.length) {
+    html += `<div class="full-section"><h3>Aspectos positivos</h3><ul class="full-list full-list-positive">${r.positives.map(p => `<li>${p}</li>`).join('')}</ul></div>`;
+  }
+  if (r.negatives && r.negatives.length) {
+    html += `<div class="full-section"><h3>Aspectos a considerar</h3><ul class="full-list full-list-negative">${r.negatives.map(n => `<li>${n}</li>`).join('')}</ul></div>`;
+  }
+  if (r.photographyTips || r.stagingAdvice) {
+    html += `<div class="full-section"><h3>Tips para la venta</h3>`;
+    if (r.photographyTips) html += `<p style="margin-bottom:6px"><strong>Fotos:</strong> ${r.photographyTips}</p>`;
+    if (r.stagingAdvice) html += `<p><strong>Staging:</strong> ${r.stagingAdvice}</p>`;
+    html += `</div>`;
+  }
+
+  // MARKET DATA
+  html += `<div class="full-section"><h3>Datos del barrio</h3>
+    <div class="teaser-details">
+      <div class="teaser-detail-row"><span>Ranking en CABA</span><strong>#${r.rank} de ${r.totalBarrios}</strong></div>
+      <div class="teaser-detail-row"><span>Precio/m2</span><strong>$${fmt(r.pricePerM2)}</strong></div>
+      <div class="teaser-detail-row"><span>Tendencia anual</span><strong class="trend-up">+${r.trend}%</strong></div>
+      <div class="teaser-detail-row"><span>Propiedades en venta</span><strong>${fmt(r.inventory.forSale)}</strong></div>
+      <div class="teaser-detail-row"><span>Propiedades en alquiler</span><strong>${fmt(r.inventory.forRent)}</strong></div>
+      <div class="teaser-detail-row"><span>Comprador objetivo</span><strong>${s.targetBuyer}</strong></div>
+      <div class="teaser-detail-row"><span>Margen negociacion</span><strong>${s.negotiationMargin}</strong></div>
+    </div>
+    <p style="margin-top:12px;font-size:13px;color:var(--text-secondary)">${s.marketInsight}</p>
+  </div>`;
+
+  // SIMILAR BARRIOS
+  if (r.similarBarrios && r.similarBarrios.length) {
+    html += `<div class="full-section"><h3>Barrios similares</h3><div class="comparison-cards">
+      ${r.similarBarrios.map(sb => {
+        const diff = sb.pricePerM2 - r.neighborhoodAvg;
+        return `<div class="comparison-card"><div class="cc-name">${sb.name}</div><div class="cc-price">$${fmt(sb.pricePerM2)}/m2</div><div class="cc-diff ${diff < 0 ? 'cheaper' : 'pricier'}">${diff > 0 ? '+' : ''}${((diff / r.neighborhoodAvg) * 100).toFixed(1)}%</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px">Tendencia: +${sb.trend}%</div></div>`;
+      }).join('')}
+    </div></div>`;
+  }
+
+  // HIGHLIGHTS
+  if (r.highlights && r.highlights.length) {
+    html += `<div class="full-section"><h3>Destacados del barrio</h3><ul class="highlights-list">${r.highlights.map(h => `<li><span class="bullet"></span>${h}</li>`).join('')}</ul></div>`;
+  }
+
+  // DISCLAIMER
+  html += `<div class="full-section" style="border-bottom:none">
+    <p style="font-size:11px;color:var(--text-muted);line-height:1.5">Este informe es una estimacion generada por inteligencia artificial basada en datos de mercado publicos y el analisis visual de las fotos proporcionadas. No constituye una tasacion formal ni reemplaza la evaluacion de un profesional matriculado. Los valores son orientativos y pueden variar segun condiciones especificas del inmueble. Datos de mercado actualizados al ${new Date().toLocaleDateString('es-AR')}. Fuentes: analisis de mercado ZonaProp, Argenprop, IDECBA.</p>
+  </div>`;
+
+  document.getElementById('full-report').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Waitlist form
+document.getElementById('waitlistForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = e.target.querySelector('input').value;
+  if (!email) return;
+  // Save waitlist lead
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+  showToast('Te sumamos a la lista. Te avisamos cuando lance!');
+  e.target.querySelector('input').value = '';
+});
+
+function saveWaitlist(form) {
+  const email = form.querySelector('input').value;
+  if (!email) return;
+  fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 3000);
+}
+</script>
+
+</body>
+</html>

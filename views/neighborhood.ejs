@@ -1,0 +1,213 @@
+<%
+const maxPrice = 3800; // for bar chart scaling
+const typologies = [
+  { key: 'monoambiente', label: 'Monoambiente' },
+  { key: 'dosAmbientes', label: '2 ambientes' },
+  { key: 'tresAmbientes', label: '3 ambientes' }
+];
+%>
+<%- include('layout', {
+  title: `${n.name} — Precio m2 y valuacion`,
+  description: `Informe inmobiliario de ${n.name}, Buenos Aires. Precio promedio: $${fmt(n.pricePerM2.avg)} USD/m2. Tendencia: +${n.pricePerM2.trend}% anual. ${n.inventory.forSale} propiedades en venta.`,
+  lastUpdated,
+  canonical: `https://tasaba-473141067823.us-central1.run.app/barrio/${n.slug}`,
+  structured: {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    "name": n.name + ", Buenos Aires",
+    "description": n.profile,
+    "address": { "@type": "PostalAddress", "addressLocality": n.name, "addressRegion": "Ciudad de Buenos Aires", "addressCountry": "AR" }
+  },
+  body: `
+
+<section class="report-header">
+  <div class="container">
+    <div style="margin-bottom:8px">
+      <a href="/" style="font-size:13px;color:var(--text-muted)">Barrios</a>
+      <span style="color:var(--text-muted);margin:0 6px">/</span>
+      <span style="font-size:13px;color:var(--text-secondary)">${n.name}</span>
+    </div>
+    <h1>${n.name}</h1>
+    <p class="subtitle">${n.profile}</p>
+    <div class="report-meta">
+      <div class="report-meta-item">Zona: <strong>${n.zone}</strong></div>
+      <div class="report-meta-item">Ranking precio: <strong>#${rank} de ${total}</strong></div>
+      <div class="report-meta-item">Ranking crecimiento: <strong>#${growthRank} de ${total}</strong></div>
+      <div class="report-meta-item">Walk Score: <strong>${n.walkScore}/100</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-value">$${fmt(n.pricePerM2.avg)}</div>
+        <div class="stat-label">USD/m2 promedio</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" style="color:var(--green)">+${n.pricePerM2.trend}%</div>
+        <div class="stat-label">Tendencia anual</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${fmt(n.inventory.forSale)}</div>
+        <div class="stat-label">En venta</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${fmt(n.inventory.forRent)}</div>
+        <div class="stat-label">En alquiler</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-2">
+      <div>
+        <h2 class="section-title" style="margin-bottom:20px">Precio por tipologia</h2>
+        <div class="card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Precio promedio</th>
+                <th>m2 promedio</th>
+                <th>USD/m2</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${typologies.map(t => {
+                const d = n.typology[t.key];
+                return `<tr>
+                  <td style="font-weight:500">${t.label}</td>
+                  <td class="num">$${fmt(d.avgPrice)}</td>
+                  <td class="num">${d.avgM2} m2</td>
+                  <td class="num">$${fmt(d.pricePerM2)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <h2 class="section-title" style="margin-bottom:20px">Rango de precios</h2>
+        <div class="card">
+          <div class="price-bar-chart">
+            <div class="price-bar-row">
+              <div class="price-bar-label">Minimo</div>
+              <div class="price-bar-track">
+                <div class="price-bar-fill" style="width:${(n.pricePerM2.min/maxPrice*100).toFixed(0)}%;background:#94a3b8">
+                  <span class="price-bar-value">$${fmt(n.pricePerM2.min)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="price-bar-row">
+              <div class="price-bar-label">Promedio</div>
+              <div class="price-bar-track">
+                <div class="price-bar-fill" style="width:${(n.pricePerM2.avg/maxPrice*100).toFixed(0)}%">
+                  <span class="price-bar-value">$${fmt(n.pricePerM2.avg)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="price-bar-row">
+              <div class="price-bar-label">Maximo</div>
+              <div class="price-bar-track">
+                <div class="price-bar-fill" style="width:${(n.pricePerM2.max/maxPrice*100).toFixed(0)}%;background:var(--accent-light)">
+                  <span class="price-bar-value">$${fmt(n.pricePerM2.max)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:20px">
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Alquiler promedio</div>
+            <div style="font-size:24px;font-weight:700;color:var(--accent)">$${n.pricePerM2Rent.avg} <span style="font-size:14px;font-weight:400;color:var(--text-muted)">USD/m2/mes</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="grid grid-2">
+      <div>
+        <h2 class="section-title" style="margin-bottom:16px">Caracteristicas del barrio</h2>
+        <ul class="highlights-list">
+          ${n.highlights.map(h => `<li><span class="bullet"></span>${h}</li>`).join('')}
+        </ul>
+        <div style="margin-top:20px">
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Subzonas</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${n.subzones.map(s => `<span class="tag">${s}</span>`).join('')}
+          </div>
+        </div>
+        ${n.nearbySubways.length ? `
+        <div style="margin-top:16px">
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Subte cercano</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${n.nearbySubways.map(s => `<span class="tag tag-accent">${s}</span>`).join('')}
+          </div>
+        </div>` : ''}
+      </div>
+      <div>
+        <h2 class="section-title" style="margin-bottom:16px">Barrios similares en precio</h2>
+        <div class="comparison-cards" style="flex-direction:column">
+          ${similar.map(s => {
+            const diff = s.pricePerM2.avg - n.pricePerM2.avg;
+            const pct = ((diff / n.pricePerM2.avg) * 100).toFixed(1);
+            return `
+            <a href="/barrio/${s.slug}" class="comparison-card card-link" style="min-width:auto">
+              <div class="cc-name">${s.name}</div>
+              <div class="cc-price">$${fmt(s.pricePerM2.avg)}/m2</div>
+              <div class="cc-diff ${diff < 0 ? 'cheaper' : 'pricier'}">
+                ${diff < 0 ? '' : '+'}${pct}% ${diff < 0 ? 'mas barato' : 'mas caro'}
+              </div>
+            </a>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="display:flex;gap:40px;flex-wrap:wrap">
+    <div style="flex:1;min-width:300px">
+      <h2 class="section-title" style="margin-bottom:12px">Tasar propiedad en ${n.name}</h2>
+      <p style="color:var(--text-secondary);font-size:14px;margin-bottom:24px">
+        Estima el valor de tu propiedad en ${n.name} basandote en los datos actuales del mercado.
+      </p>
+      <a href="/tasar?barrio=${n.slug}" class="btn btn-primary">Tasar en ${n.name}</a>
+    </div>
+    <div class="lead-form" style="flex:1;min-width:300px">
+      <h3>Tasacion personalizada</h3>
+      <p>Dejanos tus datos y te enviamos un informe detallado de tu propiedad.</p>
+      <form id="leadForm" onsubmit="submitLead(event)">
+        <input type="hidden" name="neighborhood" value="${n.slug}">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nombre</label>
+            <input class="form-input" name="name" required placeholder="Tu nombre">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefono</label>
+            <input class="form-input" name="phone" placeholder="11-XXXX-XXXX">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" name="email" type="email" required placeholder="tu@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mensaje (opcional)</label>
+          <textarea class="form-textarea" name="message" placeholder="Ej: Depto 2 ambientes, 50m2, piso 8, balcon..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Solicitar tasacion</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+` }) %>

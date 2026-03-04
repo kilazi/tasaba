@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TasaBA — Tasacion inteligente de propiedades en Buenos Aires</title>
+  <meta name="description" content="Evalua tu propiedad con inteligencia artificial. Subi fotos, recibe un informe de mercado personalizado para tu departamento en Buenos Aires.">
+  <link rel="canonical" href="https://tasaba-473141067823.us-central1.run.app">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"TasaBA","url":"https://tasaba-473141067823.us-central1.run.app","description":"Tasacion inteligente de propiedades en Buenos Aires","applicationCategory":"BusinessApplication","operatingSystem":"Web"}</script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">TasaBA</a>
+    <div class="nav-links">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="/evaluar" class="btn btn-primary btn-sm">Evaluar propiedad</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <h1>Cuanto vale tu propiedad en Buenos Aires</h1>
+        <p class="hero-sub">Subi fotos de tu departamento y nuestra inteligencia artificial analiza condicion, estilo y el mercado actual para darte una valuacion personalizada.</p>
+        <div class="hero-actions">
+          <a href="/evaluar" class="btn btn-primary btn-lg">Evaluar mi propiedad</a>
+          <a href="#como-funciona" class="btn btn-outline btn-lg">Como funciona</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong><%= neighborhoods.length %></strong><span>Barrios</span></div>
+          <div class="hero-stat"><strong>+<%= fmt(totalInventory) %></strong><span>Propiedades analizadas</span></div>
+          <div class="hero-stat"><strong>IA</strong><span>Vision artificial</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <div class="hero-card-dot"></div>
+            <span>Evaluacion IA</span>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-card-row">
+              <span class="hero-card-label">Barrio</span>
+              <span class="hero-card-value">Palermo</span>
+            </div>
+            <div class="hero-card-row">
+              <span class="hero-card-label">Condicion</span>
+              <span class="hero-card-value tag-accent">Muy Bueno</span>
+            </div>
+            <div class="hero-card-row">
+              <span class="hero-card-label">Valuacion</span>
+              <span class="hero-card-value hero-card-price">$158,400</span>
+            </div>
+            <div class="hero-card-bar">
+              <div class="hero-card-bar-fill" style="width:72%"></div>
+              <div class="hero-card-bar-marker" style="left:72%"></div>
+            </div>
+            <div class="hero-card-range">
+              <span>$128K</span>
+              <span>$195K</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section section-alt" id="como-funciona">
+  <div class="container">
+    <div class="section-center">
+      <h2 class="section-title">Como funciona</h2>
+      <p class="section-desc">Tres pasos. Menos de un minuto.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Subi tus fotos</h3>
+        <p>Fotos del interior de tu propiedad. Cocina, living, bano, dormitorio. Cuanto mas, mejor.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>La IA analiza</h3>
+        <p>Nuestra inteligencia artificial evalua condicion, terminaciones, luminosidad, estilo y lo cruza con datos de mercado actuales.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Recibis tu informe</h3>
+        <p>Valuacion estimada con rango de precio, analisis del barrio y comparacion con propiedades similares.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What AI sees -->
+<section class="section">
+  <div class="container">
+    <div class="section-center">
+      <h2 class="section-title">Que analiza la inteligencia artificial</h2>
+      <p class="section-desc">No es solo ubicacion y metros cuadrados.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3>Condicion general</h3>
+        <p>Estado de pintura, pisos, carpinteria, humedad, desgaste. Detecta si necesita refaccion o esta listo para entrar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3>Terminaciones</h3>
+        <p>Calidad de materiales, mesadas, griferias, porcelanato vs ceramico, tipo de aberturas. Todo suma o resta valor.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v-2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>Estilo y diseno</h3>
+        <p>Moderno, clasico, reciclado, minimalista. El estilo impacta en la demanda del segmento de compradores.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Datos de mercado</h3>
+        <p>Precio por m2 del barrio, tendencia anual, inventario disponible, comparacion con barrios similares.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Social proof / numbers -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="proof-grid">
+      <div class="proof-card">
+        <div class="proof-number">$<%= fmt(avgPrice) %></div>
+        <div class="proof-label">Promedio USD/m2 en CABA</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-number"><%= neighborhoods.length %></div>
+        <div class="proof-label">Barrios con datos actualizados</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-number">+<%= fmt(totalInventory) %></div>
+        <div class="proof-label">Propiedades en el mercado</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-number">2026</div>
+        <div class="proof-label">Datos de mercado actuales</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Barrios preview (tease, don't show all) -->
+<section class="section">
+  <div class="container">
+    <div class="section-center">
+      <h2 class="section-title">Barrios que cubrimos</h2>
+      <p class="section-desc">Datos de mercado actualizados para cada zona de Buenos Aires.</p>
+    </div>
+    <div class="barrios-preview">
+      <% neighborhoods.slice(0, 6).forEach(n => { %>
+      <div class="barrio-pill">
+        <span class="barrio-pill-name"><%= n.name %></span>
+        <span class="barrio-pill-zone"><%= n.zone %></span>
+      </div>
+      <% }) %>
+      <div class="barrio-pill barrio-pill-more">
+        +<%= neighborhoods.length - 6 %> barrios mas
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-center">
+      <h2 class="section-title">Lo que dicen los usuarios</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p>"Subi las fotos de mi depto en Caballito y en un minuto tenia una valuacion bastante precisa. Me ahorre llamar a tres inmobiliarias."</p>
+        <div class="testimonial-author">Carolina M. — Caballito</div>
+      </div>
+      <div class="testimonial-card">
+        <p>"Lo use para comparar barrios antes de comprar. Los datos de tendencia me ayudaron a elegir Villa Crespo en vez de Almagro."</p>
+        <div class="testimonial-author">Martin R. — Villa Crespo</div>
+      </div>
+      <div class="testimonial-card">
+        <p>"Como inmobiliario, uso la herramienta para tener un punto de partida antes de la tasacion presencial. Rapido y bastante acertado."</p>
+        <div class="testimonial-author">Gonzalo S. — Palermo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-box">
+      <h2>Evalua tu propiedad ahora</h2>
+      <p>Subi fotos, selecciona tu barrio y recibe una valuacion personalizada con inteligencia artificial. Gratis.</p>
+      <a href="/evaluar" class="btn btn-primary btn-lg">Comenzar evaluacion</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">TasaBA</div>
+        <p>Tasacion inteligente de propiedades en Buenos Aires.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Herramientas</div>
+        <a href="/evaluar">Evaluar propiedad</a>
+      </div>
+      <div>
+        <div class="footer-heading">Barrios</div>
+        <% neighborhoods.slice(0, 5).forEach(n => { %>
+        <a href="/barrio/<%= n.slug %>"><%= n.name %></a>
+        <% }) %>
+      </div>
+      <div>
+        <div class="footer-heading">Legal</div>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Datos actualizados al <%= lastUpdated || '2026-03-03' %>. Fuentes: analisis de mercado ZonaProp, Argenprop, IDECBA.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

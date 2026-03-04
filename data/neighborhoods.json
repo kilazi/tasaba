@@ -1,0 +1,292 @@
+{
+  "lastUpdated": "2026-03-03",
+  "source": "Market analysis — ZonaProp, Argenprop, IDECBA Q4 2025",
+  "currency": "USD",
+  "neighborhoods": [
+    {
+      "slug": "palermo",
+      "name": "Palermo",
+      "zone": "Norte",
+      "pricePerM2": { "avg": 3020, "min": 2400, "max": 3800, "trend": 2.1 },
+      "pricePerM2Rent": { "avg": 12.5, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 4820, "forRent": 2150 },
+      "typology": {
+        "monoambiente": { "avgPrice": 95000, "avgM2": 32, "pricePerM2": 2969 },
+        "dosAmbientes": { "avgPrice": 155000, "avgM2": 48, "pricePerM2": 3229 },
+        "tresAmbientes": { "avgPrice": 245000, "avgM2": 75, "pricePerM2": 3267 }
+      },
+      "subzones": ["Palermo Soho", "Palermo Hollywood", "Palermo Chico", "Palermo Viejo", "Las Canitas"],
+      "profile": "Gastronomia, moda, startups. El barrio mas demandado de Buenos Aires con la mayor oferta de departamentos premium. Alta rotacion de alquileres temporarios.",
+      "highlights": ["Mayor demanda de CABA", "Centro gastronomico y cultural", "Excelente conectividad (Subte D)", "Alta plusvalia historica"],
+      "demographics": { "avgAge": 34, "predominant": "Profesionales jovenes, expatriados, turistas" },
+      "nearbySubways": ["Plaza Italia (D)", "Palermo (D)", "Ministro Carranza (D)"],
+      "walkScore": 95
+    },
+    {
+      "slug": "recoleta",
+      "name": "Recoleta",
+      "zone": "Norte",
+      "pricePerM2": { "avg": 2850, "min": 2200, "max": 3600, "trend": 1.4 },
+      "pricePerM2Rent": { "avg": 11.8, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 3960, "forRent": 1680 },
+      "typology": {
+        "monoambiente": { "avgPrice": 88000, "avgM2": 30, "pricePerM2": 2933 },
+        "dosAmbientes": { "avgPrice": 148000, "avgM2": 50, "pricePerM2": 2960 },
+        "tresAmbientes": { "avgPrice": 235000, "avgM2": 80, "pricePerM2": 2938 }
+      },
+      "subzones": ["Recoleta Centro", "Barrio Norte", "La Biela"],
+      "profile": "Tradicion, cultura y elegancia. Departamentos amplios en edificios clasicos. Embajadas, museos, gastronomia de primer nivel.",
+      "highlights": ["Arquitectura europea", "Zona de embajadas", "Cementerio de Recoleta (turistico)", "Edificios de categoria"],
+      "demographics": { "avgAge": 42, "predominant": "Profesionales establecidos, familias tradicionales" },
+      "nearbySubways": ["Callao (D)", "Facultad de Medicina (D)"],
+      "walkScore": 92
+    },
+    {
+      "slug": "belgrano",
+      "name": "Belgrano",
+      "zone": "Norte",
+      "pricePerM2": { "avg": 2680, "min": 2100, "max": 3400, "trend": 1.8 },
+      "pricePerM2Rent": { "avg": 10.5, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 3240, "forRent": 1420 },
+      "typology": {
+        "monoambiente": { "avgPrice": 82000, "avgM2": 30, "pricePerM2": 2733 },
+        "dosAmbientes": { "avgPrice": 138000, "avgM2": 50, "pricePerM2": 2760 },
+        "tresAmbientes": { "avgPrice": 220000, "avgM2": 78, "pricePerM2": 2821 }
+      },
+      "subzones": ["Belgrano C", "Belgrano R", "Barrancas de Belgrano", "Belgrano Chico"],
+      "profile": "Residencial premium con excelente calidad de vida. Barrio Chino, universidades, espacios verdes amplios.",
+      "highlights": ["Barrio Chino", "Barrancas de Belgrano", "Universidades cercanas", "Zona residencial tranquila"],
+      "demographics": { "avgAge": 38, "predominant": "Familias, estudiantes universitarios, profesionales" },
+      "nearbySubways": ["Juramento (D)", "Jose Hernandez (D)", "Echeverria (D)"],
+      "walkScore": 88
+    },
+    {
+      "slug": "caballito",
+      "name": "Caballito",
+      "zone": "Centro-Oeste",
+      "pricePerM2": { "avg": 2050, "min": 1600, "max": 2600, "trend": 3.2 },
+      "pricePerM2Rent": { "avg": 8.2, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 2890, "forRent": 1350 },
+      "typology": {
+        "monoambiente": { "avgPrice": 62000, "avgM2": 30, "pricePerM2": 2067 },
+        "dosAmbientes": { "avgPrice": 98000, "avgM2": 46, "pricePerM2": 2130 },
+        "tresAmbientes": { "avgPrice": 160000, "avgM2": 72, "pricePerM2": 2222 }
+      },
+      "subzones": ["Parque Rivadavia", "Primera Junta", "Acoyte"],
+      "profile": "Centro geografico de Buenos Aires. Excelente conectividad, comercio activo, parques. Punto de equilibrio entre precio y calidad de vida.",
+      "highlights": ["Centro geografico de CABA", "Parque Rivadavia", "Subte A (primera linea)", "Relacion precio-calidad"],
+      "demographics": { "avgAge": 36, "predominant": "Familias jovenes, profesionales, comerciantes" },
+      "nearbySubways": ["Primera Junta (A)", "Acoyte (A)", "Rio de Janeiro (A)"],
+      "walkScore": 90
+    },
+    {
+      "slug": "villa-crespo",
+      "name": "Villa Crespo",
+      "zone": "Centro",
+      "pricePerM2": { "avg": 2380, "min": 1900, "max": 2900, "trend": 4.1 },
+      "pricePerM2Rent": { "avg": 9.5, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 1850, "forRent": 920 },
+      "typology": {
+        "monoambiente": { "avgPrice": 72000, "avgM2": 30, "pricePerM2": 2400 },
+        "dosAmbientes": { "avgPrice": 118000, "avgM2": 47, "pricePerM2": 2511 },
+        "tresAmbientes": { "avgPrice": 185000, "avgM2": 72, "pricePerM2": 2569 }
+      },
+      "subzones": ["Outlet District", "Thames", "Corrientes"],
+      "profile": "El barrio que mas crecio en los ultimos 5 anos. Ex-industrial reconvertido en polo gastronomico y comercial. Outlet shopping destination.",
+      "highlights": ["Mayor crecimiento de precios", "Polo de outlets", "Gastronomia emergente", "Cerca de Palermo"],
+      "demographics": { "avgAge": 32, "predominant": "Jovenes profesionales, emprendedores, artistas" },
+      "nearbySubways": ["Malabia (B)", "Angel Gallardo (B)", "Dorrego (B)"],
+      "walkScore": 87
+    },
+    {
+      "slug": "nunez",
+      "name": "Nunez",
+      "zone": "Norte",
+      "pricePerM2": { "avg": 2520, "min": 2000, "max": 3100, "trend": 2.5 },
+      "pricePerM2Rent": { "avg": 10.0, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 1680, "forRent": 720 },
+      "typology": {
+        "monoambiente": { "avgPrice": 78000, "avgM2": 31, "pricePerM2": 2516 },
+        "dosAmbientes": { "avgPrice": 130000, "avgM2": 50, "pricePerM2": 2600 },
+        "tresAmbientes": { "avgPrice": 210000, "avgM2": 78, "pricePerM2": 2692 }
+      },
+      "subzones": ["River Plate", "Libertador", "Ciudad Universitaria"],
+      "profile": "Residencial tranquilo con acceso al rio. Estadio River Plate, Ciudad Universitaria, espacios verdes generosos.",
+      "highlights": ["Acceso al rio y costanera", "Estadio Monumental", "Ciudad Universitaria", "Zona residencial premium"],
+      "demographics": { "avgAge": 40, "predominant": "Familias, deportistas, universitarios" },
+      "nearbySubways": [],
+      "walkScore": 78
+    },
+    {
+      "slug": "san-telmo",
+      "name": "San Telmo",
+      "zone": "Sur",
+      "pricePerM2": { "avg": 2150, "min": 1700, "max": 2800, "trend": 3.8 },
+      "pricePerM2Rent": { "avg": 9.0, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 1420, "forRent": 780 },
+      "typology": {
+        "monoambiente": { "avgPrice": 65000, "avgM2": 28, "pricePerM2": 2321 },
+        "dosAmbientes": { "avgPrice": 110000, "avgM2": 48, "pricePerM2": 2292 },
+        "tresAmbientes": { "avgPrice": 175000, "avgM2": 75, "pricePerM2": 2333 }
+      },
+      "subzones": ["Plaza Dorrego", "Defensa", "Lezama"],
+      "profile": "Historico, bohemio, turistico. Antiguedades, tango, mercados al aire libre. Fuerte inversion en alquileres temporarios.",
+      "highlights": ["Feria de San Telmo (domingos)", "Arquitectura colonial", "Polo tanguero", "Alquiler temporario rentable"],
+      "demographics": { "avgAge": 35, "predominant": "Artistas, turistas, expatriados, inversores" },
+      "nearbySubways": ["San Juan (C)", "Independencia (C/E)"],
+      "walkScore": 93
+    },
+    {
+      "slug": "almagro",
+      "name": "Almagro",
+      "zone": "Centro",
+      "pricePerM2": { "avg": 1950, "min": 1500, "max": 2500, "trend": 2.8 },
+      "pricePerM2Rent": { "avg": 7.8, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 2100, "forRent": 1050 },
+      "typology": {
+        "monoambiente": { "avgPrice": 58000, "avgM2": 29, "pricePerM2": 2000 },
+        "dosAmbientes": { "avgPrice": 92000, "avgM2": 45, "pricePerM2": 2044 },
+        "tresAmbientes": { "avgPrice": 148000, "avgM2": 70, "pricePerM2": 2114 }
+      },
+      "subzones": ["Abasto", "Castro Barros", "Medrano"],
+      "profile": "Barrio de tango y teatro. Abasto Shopping, teatros independientes. Excelente conectividad central con precios accesibles.",
+      "highlights": ["Abasto Shopping", "Teatros independientes", "Conectividad Subte B", "Precios competitivos"],
+      "demographics": { "avgAge": 33, "predominant": "Estudiantes, artistas, jovenes profesionales" },
+      "nearbySubways": ["Castro Barros (A)", "Loria (A)", "Medrano (B)"],
+      "walkScore": 91
+    },
+    {
+      "slug": "villa-urquiza",
+      "name": "Villa Urquiza",
+      "zone": "Norte",
+      "pricePerM2": { "avg": 2350, "min": 1800, "max": 2900, "trend": 3.5 },
+      "pricePerM2Rent": { "avg": 9.2, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 2200, "forRent": 980 },
+      "typology": {
+        "monoambiente": { "avgPrice": 70000, "avgM2": 30, "pricePerM2": 2333 },
+        "dosAmbientes": { "avgPrice": 120000, "avgM2": 48, "pricePerM2": 2500 },
+        "tresAmbientes": { "avgPrice": 195000, "avgM2": 75, "pricePerM2": 2600 }
+      },
+      "subzones": ["Triunvirato", "Monroe", "Olazabal"],
+      "profile": "Crecimiento explosivo de construccion nueva. Excelente calidad de vida residencial con precio inferior a Belgrano.",
+      "highlights": ["Boom de construccion nueva", "Subte B extension", "Calles arboladas", "Precio inferior a Belgrano"],
+      "demographics": { "avgAge": 37, "predominant": "Familias jovenes, profesionales en ascenso" },
+      "nearbySubways": ["De los Incas (B)", "Echeverria (B)"],
+      "walkScore": 84
+    },
+    {
+      "slug": "colegiales",
+      "name": "Colegiales",
+      "zone": "Norte",
+      "pricePerM2": { "avg": 2580, "min": 2100, "max": 3200, "trend": 2.9 },
+      "pricePerM2Rent": { "avg": 10.2, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 1150, "forRent": 520 },
+      "typology": {
+        "monoambiente": { "avgPrice": 80000, "avgM2": 30, "pricePerM2": 2667 },
+        "dosAmbientes": { "avgPrice": 132000, "avgM2": 48, "pricePerM2": 2750 },
+        "tresAmbientes": { "avgPrice": 210000, "avgM2": 76, "pricePerM2": 2763 }
+      },
+      "subzones": ["Calle Alvarez Thomas", "Elcano"],
+      "profile": "Pequeno, tranquilo, residencial. Extension natural de Palermo con precios levemente inferiores. Mercado de Pulgas cercano.",
+      "highlights": ["Extension de Palermo", "Tranquilidad residencial", "Mercado de Pulgas", "Precios menores a Palermo"],
+      "demographics": { "avgAge": 36, "predominant": "Parejas jovenes, profesionales, familias" },
+      "nearbySubways": ["Dorrego (B)", "Federico Lacroze (B)"],
+      "walkScore": 86
+    },
+    {
+      "slug": "flores",
+      "name": "Flores",
+      "zone": "Oeste",
+      "pricePerM2": { "avg": 1620, "min": 1200, "max": 2100, "trend": 1.5 },
+      "pricePerM2Rent": { "avg": 6.5, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 2450, "forRent": 1100 },
+      "typology": {
+        "monoambiente": { "avgPrice": 48000, "avgM2": 28, "pricePerM2": 1714 },
+        "dosAmbientes": { "avgPrice": 78000, "avgM2": 45, "pricePerM2": 1733 },
+        "tresAmbientes": { "avgPrice": 125000, "avgM2": 72, "pricePerM2": 1736 }
+      },
+      "subzones": ["Plaza Flores", "Boyaca", "Carabobo"],
+      "profile": "Comercial y popular. Avenida Rivadavia como eje, buena conectividad. Precios accesibles con buena infraestructura.",
+      "highlights": ["Precios accesibles", "Excelente conectividad (Subte A+E)", "Comercio activo", "Parque Chacabuco cercano"],
+      "demographics": { "avgAge": 35, "predominant": "Familias, comerciantes, trabajadores" },
+      "nearbySubways": ["Flores (A)", "San Pedrito (A)"],
+      "walkScore": 85
+    },
+    {
+      "slug": "liniers",
+      "name": "Liniers",
+      "zone": "Oeste",
+      "pricePerM2": { "avg": 1480, "min": 1100, "max": 1900, "trend": 2.0 },
+      "pricePerM2Rent": { "avg": 5.8, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 1280, "forRent": 580 },
+      "typology": {
+        "monoambiente": { "avgPrice": 42000, "avgM2": 28, "pricePerM2": 1500 },
+        "dosAmbientes": { "avgPrice": 68000, "avgM2": 44, "pricePerM2": 1545 },
+        "tresAmbientes": { "avgPrice": 110000, "avgM2": 70, "pricePerM2": 1571 }
+      },
+      "subzones": ["Estacion Liniers", "Ali"],
+      "profile": "Puerta de entrada a CABA desde zona oeste. Fuerte identidad barrial, feria boliviana, estacion de tren. Precios mas bajos de la ciudad.",
+      "highlights": ["Precios mas bajos de CABA", "Estacion tren Sarmiento", "Identidad barrial fuerte", "Potencial de revalorizacion"],
+      "demographics": { "avgAge": 38, "predominant": "Familias trabajadoras, comunidad boliviana, comerciantes" },
+      "nearbySubways": [],
+      "walkScore": 75
+    },
+    {
+      "slug": "mataderos",
+      "name": "Mataderos",
+      "zone": "Oeste",
+      "pricePerM2": { "avg": 1380, "min": 1000, "max": 1800, "trend": 1.8 },
+      "pricePerM2Rent": { "avg": 5.5, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 980, "forRent": 420 },
+      "typology": {
+        "monoambiente": { "avgPrice": 40000, "avgM2": 28, "pricePerM2": 1429 },
+        "dosAmbientes": { "avgPrice": 64000, "avgM2": 44, "pricePerM2": 1455 },
+        "tresAmbientes": { "avgPrice": 105000, "avgM2": 70, "pricePerM2": 1500 }
+      },
+      "subzones": ["Feria de Mataderos", "Lisandro de la Torre"],
+      "profile": "Tradicion gaucha en la ciudad. Feria dominical iconica, identidad cultural fuerte. Zona en desarrollo con potencial de crecimiento.",
+      "highlights": ["Feria de Mataderos (cultural)", "Tradicion gaucha", "Precios de entrada", "Potencial de desarrollo"],
+      "demographics": { "avgAge": 40, "predominant": "Familias tradicionales, trabajadores" },
+      "nearbySubways": [],
+      "walkScore": 70
+    },
+    {
+      "slug": "barracas",
+      "name": "Barracas",
+      "zone": "Sur",
+      "pricePerM2": { "avg": 1720, "min": 1300, "max": 2200, "trend": 4.5 },
+      "pricePerM2Rent": { "avg": 7.0, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 1150, "forRent": 520 },
+      "typology": {
+        "monoambiente": { "avgPrice": 52000, "avgM2": 29, "pricePerM2": 1793 },
+        "dosAmbientes": { "avgPrice": 85000, "avgM2": 46, "pricePerM2": 1848 },
+        "tresAmbientes": { "avgPrice": 138000, "avgM2": 72, "pricePerM2": 1917 }
+      },
+      "subzones": ["Santa Lucia", "Montes de Oca", "Herrera"],
+      "profile": "El nuevo San Telmo. Arte callejero, galpones reconvertidos, gastronomia emergente. Fuerte revalorizacion en curso.",
+      "highlights": ["Mayor revalorizacion del sur", "Arte urbano y murales", "Galpones reconvertidos", "Cerca del centro"],
+      "demographics": { "avgAge": 33, "predominant": "Artistas, jovenes, primeros compradores" },
+      "nearbySubways": ["Hospitales (H)", "Caseros (H)"],
+      "walkScore": 82
+    },
+    {
+      "slug": "villa-luro",
+      "name": "Villa Luro",
+      "zone": "Oeste",
+      "pricePerM2": { "avg": 1580, "min": 1200, "max": 2000, "trend": 2.2 },
+      "pricePerM2Rent": { "avg": 6.2, "currency": "USD/m2/month" },
+      "inventory": { "forSale": 850, "forRent": 380 },
+      "typology": {
+        "monoambiente": { "avgPrice": 46000, "avgM2": 28, "pricePerM2": 1643 },
+        "dosAmbientes": { "avgPrice": 74000, "avgM2": 44, "pricePerM2": 1682 },
+        "tresAmbientes": { "avgPrice": 120000, "avgM2": 70, "pricePerM2": 1714 }
+      },
+      "subzones": ["Estacion Villa Luro", "Falcon"],
+      "profile": "Residencial familiar con calles tranquilas. Buena conectividad por tren Sarmiento. Alternativa accesible a Caballito.",
+      "highlights": ["Alternativa a Caballito", "Estacion tren Sarmiento", "Calles tranquilas", "Buen precio por m2"],
+      "demographics": { "avgAge": 39, "predominant": "Familias, jubilados, trabajadores" },
+      "nearbySubways": [],
+      "walkScore": 76
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+<%- include('layout', {
+  title: 'Ranking de barrios por precio',
+  description: 'Ranking completo de barrios de Buenos Aires por precio del metro cuadrado y crecimiento anual. Comparativa de precios inmobiliarios por zona.',
+  lastUpdated,
+  canonical: 'https://tasaba-473141067823.us-central1.run.app/ranking',
+  body: `
+
+<section class="section">
+  <div class="container">
+    <h1 style="font-size:32px;font-weight:700;margin-bottom:8px">Ranking de barrios</h1>
+    <p style="color:var(--text-secondary);margin-bottom:32px">
+      Comparativa de precios del metro cuadrado en Ciudad de Buenos Aires. Datos actualizados al ${lastUpdated}.
+    </p>
+
+    <div class="card" style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Barrio</th>
+            <th>Zona</th>
+            <th>USD/m2</th>
+            <th>Rango</th>
+            <th>Tendencia</th>
+            <th>En venta</th>
+            <th>Alquiler/m2</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${byPrice.map((n, i) => `
+          <tr>
+            <td><span class="rank-num ${i < 3 ? 'top' : ''}">${i + 1}</span></td>
+            <td><a href="/barrio/${n.slug}" style="font-weight:600">${n.name}</a></td>
+            <td style="color:var(--text-muted)">${n.zone}</td>
+            <td class="num" style="color:var(--accent);font-size:15px">$${fmt(n.pricePerM2.avg)}</td>
+            <td class="num" style="color:var(--text-muted);font-size:13px">$${fmt(n.pricePerM2.min)} — $${fmt(n.pricePerM2.max)}</td>
+            <td><span class="barrio-trend ${n.pricePerM2.trend > 0 ? 'trend-up' : 'trend-down'}" style="margin:0">${n.pricePerM2.trend > 0 ? '+' : ''}${n.pricePerM2.trend}%</span></td>
+            <td class="num">${fmt(n.inventory.forSale)}</td>
+            <td class="num">$${n.pricePerM2Rent.avg}</td>
+          </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:48px">
+      <h2 class="section-title" style="margin-bottom:24px">Ranking por crecimiento anual</h2>
+      <div class="card" style="overflow-x:auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Barrio</th>
+              <th>Tendencia anual</th>
+              <th>USD/m2</th>
+              <th>Zona</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${byGrowth.map((n, i) => `
+            <tr>
+              <td><span class="rank-num ${i < 3 ? 'top' : ''}">${i + 1}</span></td>
+              <td><a href="/barrio/${n.slug}" style="font-weight:600">${n.name}</a></td>
+              <td><span class="barrio-trend trend-up" style="margin:0;font-size:14px">+${n.pricePerM2.trend}%</span></td>
+              <td class="num" style="color:var(--accent)">$${fmt(n.pricePerM2.avg)}</td>
+              <td style="color:var(--text-muted)">${n.zone}</td>
+            </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;text-align:center">
+      <h2 class="section-title" style="margin-bottom:12px">Queres tasar tu propiedad?</h2>
+      <p style="color:var(--text-secondary);margin-bottom:20px">Usa nuestra herramienta gratuita de valuacion.</p>
+      <a href="/tasar" class="btn btn-primary">Tasar mi propiedad</a>
+    </div>
+  </div>
+</section>
+
+` }) %>

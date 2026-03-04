@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' — TasaBA' : 'TasaBA — Valor del metro cuadrado en Buenos Aires' %></title>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Informes de valuacion inmobiliaria por barrio en Buenos Aires. Precio por metro cuadrado, tendencias y analisis de mercado.' %>">
+  <link rel="canonical" href="<%= typeof canonical !== 'undefined' ? canonical : 'https://tasaba-473141067823.us-central1.run.app' %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <% if (typeof structured !== 'undefined' && structured) { %>
+  <script type="application/ld+json"><%- JSON.stringify(structured) %></script>
+  <% } %>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">TasaBA <span>by Spawn</span></a>
+      <div class="nav-links">
+        <a href="/">Barrios</a>
+        <a href="/ranking">Ranking</a>
+        <a href="/tasar">Tasar</a>
+      </div>
+    </div>
+  </nav>
+
+  <%- body %>
+
+  <footer class="footer">
+    <div class="container">
+      <p>TasaBA — Informes de mercado inmobiliario para Buenos Aires</p>
+      <p style="margin-top:8px">Datos actualizados al <%= typeof lastUpdated !== 'undefined' ? lastUpdated : '2026-03-03' %>. Fuentes: ZonaProp, Argenprop, IDECBA.</p>
+      <p style="margin-top:8px"><a href="/sitemap.xml">Sitemap</a></p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="/js/main.js"></script>
+</body>
+</html>
