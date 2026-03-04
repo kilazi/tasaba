@@ -196,6 +196,18 @@ a:hover { color: var(--accent-light); }
 .form-row { display: flex; gap: 12px; }
 .form-row > * { flex: 1; }
 
+/* Amenities chips */
+.amenities-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.chip { display: flex; cursor: pointer; }
+.chip input { display: none; }
+.chip span { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); color: var(--text-secondary); transition: all var(--transition); user-select: none; }
+.chip input:checked + span { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.chip:hover span { border-color: var(--accent); }
+
+/* Photo suggestions */
+.photo-suggestions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12px; color: var(--text-muted); }
+.photo-tag { background: var(--surface-alt); border: 1px solid var(--border-light); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+
 /* Upload zone */
 .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px; text-align: center; cursor: pointer; transition: all var(--transition); background: var(--surface); }
 .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: var(--accent-bg); }

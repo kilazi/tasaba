@@ -3,7 +3,19 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const multer = require('multer');
-const PDFDocument = require('pdfkit');
+const ejs = require('ejs');
+
+let browser = null;
+async function getBrowser() {
+  if (!browser) {
+    const puppeteer = require('puppeteer');
+    browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+    });
+  }
+  return browser;
+}
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -35,12 +47,15 @@ const byPrice = [...neighborhoods].sort((a, b) => b.pricePerM2.avg - a.pricePerM
 const byGrowth = [...neighborhoods].sort((a, b) => b.pricePerM2.trend - a.pricePerM2.trend);
 
 // Generate strategy analysis from market data (no AI needed)
-function generateStrategy(n, m2, estimate) {
+function generateStrategy(n, m2, estimate, typology) {
   const trend = n.pricePerM2.trend;
   const avgPrice = n.pricePerM2.avg;
   const forSale = n.inventory.forSale;
   const forRent = n.inventory.forRent;
-  const rentPerM2 = (n.pricePerM2Rent && n.pricePerM2Rent.avg) || 8;
+  // Use typology-specific rent data (Q1 2026 Zonaprop/Infobae sourced)
+  const rentData = n.pricePerM2Rent || {};
+  const typoKey = typology === 'monoambiente' ? 'mono' : typology === 'tresAmbientes' ? 'tres' : 'dos';
+  const rentPerM2 = rentData[typoKey] || rentData.avg || 11;
   const monthlyRent = Math.round(rentPerM2 * m2);
   const annualRent = monthlyRent * 12;
   const grossYield = ((annualRent / estimate.mid) * 100).toFixed(1);
@@ -146,7 +161,7 @@ function analyzePhotos(base64Images, propertyInfo) {
           type: 'text',
           text: `Sos un tasador profesional de propiedades en Buenos Aires, Argentina. Analiza estas fotos y da una evaluacion detallada y profesional.
 
-Datos: barrio ${propertyInfo.neighborhood}, ${propertyInfo.m2}m2, ${propertyInfo.typology}, piso ${propertyInfo.floor || 'no especificado'}, amenities: ${propertyInfo.amenities || 'no especificados'}.
+Datos: barrio ${propertyInfo.neighborhood}, ${propertyInfo.m2}m2, ${propertyInfo.typology}, piso ${propertyInfo.floor || 'no especificado'}, amenities: ${propertyInfo.amenities || 'no especificados'}. ${propertyInfo.notes ? 'Notas del propietario: ' + propertyInfo.notes : ''}
 
 Responde en espanol rioplatense profesional. Devuelve SOLO JSON valido con estos campos:
 {
@@ -221,7 +236,7 @@ app.get('/evaluar', (req, res) => {
 // Process AI evaluation
 app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
   try {
-    const { neighborhood: slug, m2, typology, floor, amenities } = req.body;
+    const { neighborhood: slug, m2, typology, floor, amenities, address, notes } = req.body;
     const n = getNeighborhood(slug);
     if (!n) return res.status(400).json({ error: 'Barrio no encontrado' });
 
@@ -233,7 +248,7 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
     if (req.files && req.files.length > 0 && OPENAI_KEY) {
       const base64Images = req.files.map(f => f.buffer.toString('base64'));
       try {
-        aiAnalysis = await analyzePhotos(base64Images, { neighborhood: n.name, m2: sqm, typology, floor, amenities });
+        aiAnalysis = await analyzePhotos(base64Images, { neighborhood: n.name, m2: sqm, typology, floor, amenities, notes });
         // Apply AI adjustment to estimate
         if (aiAnalysis.adjustment) {
           const adj = parseFloat(aiAnalysis.adjustment) / 100;
@@ -247,7 +262,7 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
     }
 
     // Generate strategy analysis (always, no AI needed)
-    const strategy = generateStrategy(n, sqm, estimate);
+    const strategy = generateStrategy(n, sqm, estimate, typology || 'dosAmbientes');
 
     // Teaser: show enough to hook, hide the good stuff
     const teaser = {
@@ -276,6 +291,8 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
     // Full report (gated behind lead capture)
     const fullReport = {
       ...teaser,
+      address: address || '',
+      typology: typology || 'dosAmbientes',
       pricePerM2: estimate.pricePerM2,
       features: aiAnalysis ? aiAnalysis.features : [],
       positives: aiAnalysis ? aiAnalysis.positives : [],
@@ -359,162 +376,45 @@ app.get('/barrio/:slug', (req, res) => {
   res.render('neighborhood', { n, rank, growthRank, total: neighborhoods.length, similar, fmt, lastUpdated: neighborhoodData.lastUpdated });
 });
 
-// PDF report download
-app.get('/api/report/:evalId/pdf', (req, res) => {
-  const evalsFile = path.join(__dirname, 'data/evaluations.json');
-  let evals = {};
-  try { evals = JSON.parse(fs.readFileSync(evalsFile, 'utf8')); } catch(e) {}
-  const evaluation = evals[req.params.evalId];
-  if (!evaluation) return res.status(404).json({ error: 'Evaluacion no encontrada' });
+// PDF report download — Puppeteer renders HTML template to PDF
+app.get('/api/report/:evalId/pdf', async (req, res) => {
+  try {
+    const evalsFile = path.join(__dirname, 'data/evaluations.json');
+    let evals = {};
+    try { evals = JSON.parse(fs.readFileSync(evalsFile, 'utf8')); } catch(e) {}
+    const evaluation = evals[req.params.evalId];
+    if (!evaluation) return res.status(404).json({ error: 'Evaluacion no encontrada' });
 
-  const r = evaluation.fullReport;
-  const s = r.strategy;
+    const r = evaluation.fullReport;
+    const s = r.strategy;
 
-  const doc = new PDFDocument({ size: 'A4', margin: 50 });
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename=TasaBA-Informe-${req.params.evalId}.pdf`);
-  doc.pipe(res);
+    // Render EJS template to HTML
+    const html = await ejs.renderFile(path.join(__dirname, 'views/report-pdf.ejs'), { r, s, fmt });
 
-  // Header
-  doc.fontSize(24).font('Helvetica-Bold').fillColor('#1a365d').text('TasaBA', { continued: true });
-  doc.fontSize(10).font('Helvetica').fillColor('#999').text('  Informe de valuacion', { align: 'left' });
-  doc.moveDown(0.5);
-  doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#e5e5e7').stroke();
-  doc.moveDown(0.5);
-
-  // Property info
-  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`${r.neighborhood} — ${r.zone} — ${r.m2}m2 — ${new Date().toLocaleDateString('es-AR')}`);
-  doc.moveDown(1);
-
-  // Valuation
-  doc.fontSize(28).font('Helvetica-Bold').fillColor('#1a365d').text(`USD $${fmt(r.estimatedPrice)}`);
-  doc.fontSize(12).font('Helvetica').fillColor('#999').text(`Rango: $${fmt(r.priceRange.low)} — $${fmt(r.priceRange.high)}`);
-  doc.moveDown(0.5);
-
-  // Key metrics
-  const metrics = [
-    ['Demanda', `${s.demandScore}/100`],
-    ['Mercado', s.marketTiming],
-    ['Tiempo est. venta', s.timeToSell],
-    ['Tendencia anual', `+${r.trend}%`],
-    ['Precio/m2', `$${fmt(r.pricePerM2)}`],
-    ['Ranking CABA', `#${r.rank} de ${r.totalBarrios}`]
-  ];
-  doc.moveDown(0.5);
-  metrics.forEach(([label, val]) => {
-    doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(label, { continued: true, width: 200 });
-    doc.font('Helvetica-Bold').fillColor('#1a1a1a').text(`  ${val}`);
-  });
-
-  // AI Summary
-  if (r.summary) {
-    doc.moveDown(1);
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('RESUMEN IA');
-    doc.moveDown(0.3);
-    doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(r.summary, { lineGap: 3 });
-  }
-
-  // Strategy: Sell vs Wait
-  doc.moveDown(1);
-  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('VENDER AHORA VS ESPERAR');
-  doc.moveDown(0.3);
-  doc.fontSize(10).font('Helvetica-Bold').fillColor('#16a34a').text(s.sellVsWait.recommendation);
-  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.sellVsWait.reason, { lineGap: 3 });
-  doc.moveDown(0.3);
-  doc.font('Helvetica').fillColor('#6b6b6b')
-    .text(`Proyeccion 2027: $${fmt(s.sellVsWait.projected1yr)} (+$${fmt(s.sellVsWait.waitGain1yr)})`)
-    .text(`Proyeccion 2029: $${fmt(s.sellVsWait.projected3yr)} (+$${fmt(s.sellVsWait.waitGain3yr)})`)
-    .text(`Proyeccion 2031: $${fmt(s.sellVsWait.projected5yr)} (+$${fmt(s.sellVsWait.projected5yr - r.estimatedPrice)})`);
-
-  // Strategy: Renovation
-  doc.moveDown(1);
-  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('RENOVAR VS VENDER ASI');
-  doc.moveDown(0.3);
-  doc.fontSize(10).font('Helvetica-Bold').fillColor('#16a34a').text(s.renovationAdvice.recommendation);
-  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.renovationAdvice.reason, { lineGap: 3 });
-  doc.moveDown(0.3);
-  doc.font('Helvetica').fillColor('#6b6b6b')
-    .text(`Costo estimado: $${fmt(s.renovationAdvice.estimatedCost)}`)
-    .text(`Aumento valor: +$${fmt(s.renovationAdvice.estimatedValueIncrease)}`)
-    .text(`ROI: ${s.renovationAdvice.roi}%`);
-
-  // Strategy: Rent Analysis
-  doc.addPage();
-  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('VENDER VS ALQUILAR');
-  doc.moveDown(0.3);
-  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.rentAnalysis.verdict, { lineGap: 3 });
-  doc.moveDown(0.5);
-
-  // Rent comparison table
-  const rentData = [
-    ['', 'Vender', 'Temp.', 'Tradicional'],
-    ['Capital/Ingreso', `$${fmt(s.rentAnalysis.sell.immediateCapital)}`, `$${fmt(s.rentAnalysis.shortTerm.monthlyEstimate)}/m`, `$${fmt(s.rentAnalysis.longTerm.monthlyEstimate)}/m`],
-    ['Ingreso neto anual', `$${fmt(s.rentAnalysis.sell.annualPassiveIncome)}`, `$${fmt(s.rentAnalysis.shortTerm.annualNet)}`, `$${fmt(s.rentAnalysis.longTerm.annualNet)}`],
-    ['Rendimiento', '5.5%', `${s.rentAnalysis.shortTerm.netYield}%`, `${s.rentAnalysis.longTerm.netYield}%`]
-  ];
-  rentData.forEach((row, i) => {
-    const y = doc.y;
-    const isHeader = i === 0;
-    row.forEach((cell, j) => {
-      const x = 50 + j * 125;
-      doc.fontSize(9).font(isHeader ? 'Helvetica-Bold' : 'Helvetica').fillColor(isHeader ? '#1a365d' : '#6b6b6b').text(cell, x, y, { width: 120 });
+    // Generate PDF with Puppeteer
+    const b = await getBrowser();
+    const page = await b.newPage();
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' }
     });
-    doc.moveDown(0.6);
-  });
+    await page.close();
 
-  // AI Features
-  if (r.features && r.features.length) {
-    doc.moveDown(0.5);
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('CARACTERISTICAS IA');
-    doc.moveDown(0.3);
-    doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(r.features.join(', '), { lineGap: 3 });
+    // Build filename from address or neighborhood
+    const label = (r.address || r.neighborhood || 'propiedad')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '-').substring(0, 60);
+    const filename = `TasaBA-${label}-${r.m2}m2.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.end(pdfBuffer);
+  } catch(e) {
+    console.error('PDF generation error:', e);
+    res.status(500).json({ error: 'Error al generar PDF' });
   }
-
-  if (r.positives && r.positives.length) {
-    doc.moveDown(0.5);
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('ASPECTOS POSITIVOS');
-    doc.moveDown(0.3);
-    r.positives.forEach(p => doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`+ ${p}`));
-  }
-
-  if (r.negatives && r.negatives.length) {
-    doc.moveDown(0.5);
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('ASPECTOS A CONSIDERAR');
-    doc.moveDown(0.3);
-    r.negatives.forEach(n => doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`- ${n}`));
-  }
-
-  // Market insight
-  doc.moveDown(1);
-  doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('INSIGHT DE MERCADO');
-  doc.moveDown(0.3);
-  doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(s.marketInsight, { lineGap: 3 });
-  doc.moveDown(0.3);
-  doc.text(`Comprador objetivo: ${s.targetBuyer}`);
-  doc.text(`Margen de negociacion: ${s.negotiationMargin}`);
-
-  // Similar neighborhoods
-  if (r.similarBarrios && r.similarBarrios.length) {
-    doc.moveDown(0.5);
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1a365d').text('BARRIOS SIMILARES');
-    doc.moveDown(0.3);
-    r.similarBarrios.forEach(sb => {
-      doc.fontSize(10).font('Helvetica').fillColor('#6b6b6b').text(`${sb.name}: $${fmt(sb.pricePerM2)}/m2 (tendencia +${sb.trend}%)`);
-    });
-  }
-
-  // Disclaimer
-  doc.moveDown(1.5);
-  doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#e5e5e7').stroke();
-  doc.moveDown(0.5);
-  doc.fontSize(8).font('Helvetica').fillColor('#999').text(
-    'Este informe es una estimacion generada por inteligencia artificial basada en datos de mercado publicos. No constituye una tasacion formal ni reemplaza la evaluacion de un profesional matriculado. Los valores son orientativos. Fuentes: ZonaProp, Argenprop, IDECBA.',
-    { lineGap: 2, align: 'center' }
-  );
-  doc.moveDown(0.3);
-  doc.fontSize(8).font('Helvetica').fillColor('#1a365d').text('TasaBA — tasaba-473141067823.us-central1.run.app', { align: 'center' });
-
-  doc.end();
 });
 
 // Sitemap

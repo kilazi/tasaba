@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #1a1a1a; line-height: 1.5; font-size: 13px; background: #fff; }
+
+  .container { max-width: 100%; padding: 0 10px; }
+
+  /* Header */
+  .pdf-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 28px; background: #1a365d; color: #fff; }
+  .pdf-logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+  .pdf-logo-icon { width: 28px; height: 28px; background: rgba(255,255,255,0.15); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .pdf-header-right { text-align: right; font-size: 11px; opacity: 0.7; }
+
+  /* Property info */
+  .pdf-property { padding: 16px 28px; background: #f5f5f7; border-bottom: 1px solid #e5e5e7; }
+  .pdf-property h2 { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .pdf-property p { font-size: 12px; color: #6b6b6b; }
+
+  /* Price section */
+  .price-section { text-align: center; padding: 28px; border-bottom: 1px solid #e5e5e7; }
+  .price-main { font-size: 36px; font-weight: 800; color: #1a365d; letter-spacing: -1px; }
+  .price-range { font-size: 13px; color: #999; margin-top: 2px; }
+  .metrics-row { display: flex; gap: 20px; justify-content: center; margin-top: 16px; }
+  .metric { text-align: center; }
+  .metric-val { font-size: 18px; font-weight: 700; display: block; }
+  .metric-val.accent { color: #1a365d; }
+  .metric-val.green { color: #16a34a; }
+  .metric-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.3px; }
+
+  /* Sections */
+  .section { padding: 20px 28px; border-bottom: 1px solid #f0f0f2; }
+  .section:last-child { border-bottom: none; }
+  .section h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 10px; }
+  .section p { font-size: 13px; color: #6b6b6b; line-height: 1.6; }
+
+  /* Strategy badges */
+  .strategy-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+  .badge-green { background: #f0fdf4; color: #16a34a; }
+  .badge-blue { background: #ebf2ff; color: #1a365d; }
+  .confidence { font-size: 11px; color: #999; }
+
+  /* Projections */
+  .projection-grid { display: flex; gap: 10px; margin-top: 14px; }
+  .projection-card { flex: 1; background: #f5f5f7; border: 1px solid #f0f0f2; border-radius: 8px; padding: 14px; text-align: center; }
+  .projection-year { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+  .projection-price { font-size: 17px; font-weight: 800; color: #1a365d; margin: 3px 0; }
+  .projection-gain { font-size: 12px; font-weight: 600; color: #16a34a; }
+
+  /* Detail rows */
+  .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f2; font-size: 13px; }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row span { color: #6b6b6b; }
+  .detail-row strong { font-weight: 600; }
+  .trend-up { color: #16a34a; }
+
+  /* Quick wins */
+  .quick-win { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f2; font-size: 12px; }
+  .quick-win:last-child { border-bottom: none; }
+  .quick-win .cost { color: #999; }
+  .quick-win .impact { color: #16a34a; font-weight: 600; }
+
+  /* Rent comparison */
+  .rent-grid { display: flex; gap: 10px; margin-top: 14px; }
+  .rent-card { flex: 1; border: 1px solid #e5e5e7; border-radius: 8px; overflow: hidden; }
+  .rent-header { padding: 8px; text-align: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .rent-header.sell { background: #1a365d; }
+  .rent-header.short { background: #d97706; }
+  .rent-header.long { background: #16a34a; }
+  .rent-body { padding: 12px; }
+  .rent-big { font-size: 17px; font-weight: 800; color: #1a1a1a; }
+  .rent-sub { font-size: 10px; color: #999; margin-bottom: 10px; }
+  .rent-detail { display: flex; justify-content: space-between; padding: 4px 0; font-size: 11px; border-bottom: 1px solid #f0f0f2; }
+  .rent-detail:last-of-type { border-bottom: none; }
+  .rent-detail span { color: #999; }
+  .rent-detail strong { font-weight: 600; }
+  .rent-pro { font-size: 10px; color: #16a34a; padding: 1px 0; }
+  .rent-con { font-size: 10px; color: #dc2626; padding: 1px 0; }
+
+  /* Tags */
+  .tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; background: #f5f5f7; color: #6b6b6b; border: 1px solid #f0f0f2; }
+
+  /* Lists */
+  .list-positive li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #16a34a; margin-right: 8px; vertical-align: middle; }
+  .list-negative li::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #d97706; margin-right: 8px; vertical-align: middle; }
+  .full-list { list-style: none; }
+  .full-list li { padding: 4px 0; font-size: 13px; color: #6b6b6b; }
+
+  /* Comparison cards */
+  .comparison-grid { display: flex; gap: 10px; }
+  .comparison-card { flex: 1; background: #f5f5f7; border: 1px solid #f0f0f2; border-radius: 8px; padding: 12px; }
+  .cc-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+  .cc-price { font-size: 16px; font-weight: 700; color: #1a365d; }
+  .cc-diff { font-size: 11px; font-weight: 600; }
+  .cc-diff.cheaper { color: #16a34a; }
+  .cc-diff.pricier { color: #dc2626; }
+
+  /* Highlights */
+  .highlights li { padding: 5px 0; font-size: 13px; color: #6b6b6b; border-bottom: 1px solid #f0f0f2; display: flex; align-items: center; gap: 8px; list-style: none; }
+  .highlights li:last-child { border-bottom: none; }
+  .bullet { width: 6px; height: 6px; border-radius: 50%; background: #1a365d; flex-shrink: 0; }
+
+  /* Disclaimer */
+  .disclaimer { padding: 16px 28px; border-top: 1px solid #e5e5e7; margin-top: 8px; }
+  .disclaimer p { font-size: 9px; color: #999; line-height: 1.5; text-align: center; }
+  .disclaimer .brand { font-size: 9px; color: #1a365d; font-weight: 600; margin-top: 4px; text-align: center; }
+
+  /* Page breaks */
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="pdf-header">
+  <div class="pdf-logo">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="rgba(255,255,255,0.15)"/><path d="M6 18l10-10 10 10" stroke="white" stroke-width="2.5" fill="none"/><rect x="12" y="16" width="8" height="10" rx="1" fill="white" opacity=".9"/></svg>
+    TasaBA
+  </div>
+  <div class="pdf-header-right">
+    Informe de valuacion<br>
+    <%= new Date().toLocaleDateString('es-AR') %>
+  </div>
+</div>
+
+<!-- PROPERTY -->
+<div class="pdf-property">
+  <h2><%= r.address || r.neighborhood %></h2>
+  <p><%= r.neighborhood %> — <%= r.zone %> — <%= r.m2 %>m2 — <%= r.typology === 'monoambiente' ? 'Monoambiente' : r.typology === 'dosAmbientes' ? '2 ambientes' : '3 ambientes' %></p>
+</div>
+
+<!-- PRICE -->
+<div class="price-section">
+  <div class="price-main">USD $<%= fmt(r.estimatedPrice) %></div>
+  <div class="price-range">$<%= fmt(r.priceRange.low) %> — $<%= fmt(r.priceRange.high) %></div>
+  <div class="metrics-row">
+    <div class="metric">
+      <span class="metric-val accent"><%= s.demandScore %>/100</span>
+      <span class="metric-label">Demanda</span>
+    </div>
+    <div class="metric">
+      <span class="metric-val green"><%= s.marketTiming %></span>
+      <span class="metric-label">Mercado</span>
+    </div>
+    <div class="metric">
+      <span class="metric-val"><%= s.timeToSell %></span>
+      <span class="metric-label">Venta est.</span>
+    </div>
+    <div class="metric">
+      <span class="metric-val accent">$<%= fmt(r.pricePerM2) %>/m2</span>
+      <span class="metric-label">Precio/m2</span>
+    </div>
+    <div class="metric">
+      <span class="metric-val">#<%= r.rank %>/<%= r.totalBarrios %></span>
+      <span class="metric-label">Ranking CABA</span>
+    </div>
+  </div>
+</div>
+
+<% if (r.summary) { %>
+<div class="section">
+  <h3>Resumen de la IA</h3>
+  <p><%= r.summary %></p>
+</div>
+<% } %>
+
+<!-- SELL VS WAIT -->
+<div class="section">
+  <h3>Vender ahora vs esperar</h3>
+  <div class="strategy-row">
+    <span class="badge <%= s.sellVsWait.confidence === 'Alta' ? 'badge-green' : 'badge-blue' %>"><%= s.sellVsWait.recommendation %></span>
+    <span class="confidence">Confianza: <%= s.sellVsWait.confidence %></span>
+  </div>
+  <p><%= s.sellVsWait.reason %></p>
+  <div class="projection-grid">
+    <div class="projection-card">
+      <div class="projection-year">2027</div>
+      <div class="projection-price">$<%= fmt(s.sellVsWait.projected1yr) %></div>
+      <div class="projection-gain">+$<%= fmt(s.sellVsWait.waitGain1yr) %></div>
+    </div>
+    <div class="projection-card">
+      <div class="projection-year">2029</div>
+      <div class="projection-price">$<%= fmt(s.sellVsWait.projected3yr) %></div>
+      <div class="projection-gain">+$<%= fmt(s.sellVsWait.waitGain3yr) %></div>
+    </div>
+    <div class="projection-card">
+      <div class="projection-year">2031</div>
+      <div class="projection-price">$<%= fmt(s.sellVsWait.projected5yr) %></div>
+      <div class="projection-gain">+$<%= fmt(s.sellVsWait.projected5yr - r.estimatedPrice) %></div>
+    </div>
+  </div>
+</div>
+
+<!-- RENOVATE VS SELL -->
+<div class="section">
+  <h3>Renovar vs vender asi</h3>
+  <div class="strategy-row">
+    <span class="badge <%= s.renovationAdvice.confidence === 'Alta' ? 'badge-green' : 'badge-blue' %>"><%= s.renovationAdvice.recommendation %></span>
+    <span class="confidence">Confianza: <%= s.renovationAdvice.confidence %></span>
+  </div>
+  <p><%= s.renovationAdvice.reason %></p>
+  <% if (r.renovationNotes) { %>
+  <p style="margin-top:6px;font-style:italic;color:#999">IA: <%= r.renovationNotes %></p>
+  <% } %>
+  <div style="margin-top:12px">
+    <div class="detail-row"><span>Costo estimado de renovacion</span><strong>$<%= fmt(s.renovationAdvice.estimatedCost) %></strong></div>
+    <div class="detail-row"><span>Aumento estimado de valor</span><strong class="trend-up">+$<%= fmt(s.renovationAdvice.estimatedValueIncrease) %></strong></div>
+    <div class="detail-row"><span>ROI estimado</span><strong class="trend-up"><%= s.renovationAdvice.roi %>%</strong></div>
+  </div>
+  <div style="margin-top:12px">
+    <div style="font-size:12px;font-weight:600;margin-bottom:6px">Mejoras rapidas con mayor impacto:</div>
+    <% s.renovationAdvice.quickWins.forEach(q => { %>
+    <div class="quick-win">
+      <span><%= q.item %></span>
+      <span class="cost">~$<%= fmt(q.cost) %></span>
+      <span class="impact"><%= q.impact %></span>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<!-- SELL VS RENT -->
+<div class="section">
+  <h3>Vender vs alquilar</h3>
+  <p style="margin-bottom:14px"><%= s.rentAnalysis.verdict %></p>
+  <div class="rent-grid">
+    <div class="rent-card">
+      <div class="rent-header sell">Vender</div>
+      <div class="rent-body">
+        <div class="rent-big">$<%= fmt(s.rentAnalysis.sell.immediateCapital) %></div>
+        <div class="rent-sub">Capital inmediato</div>
+        <div class="rent-detail"><span>Rend. reinversion</span><strong><%= s.rentAnalysis.sell.reinvestmentYield %></strong></div>
+        <div class="rent-detail"><span>Ingreso pasivo anual</span><strong>$<%= fmt(s.rentAnalysis.sell.annualPassiveIncome) %></strong></div>
+        <div style="margin-top:6px">
+          <% s.rentAnalysis.sell.pros.forEach(p => { %><div class="rent-pro">+ <%= p %></div><% }) %>
+          <% s.rentAnalysis.sell.cons.forEach(c => { %><div class="rent-con">- <%= c %></div><% }) %>
+        </div>
+      </div>
+    </div>
+    <div class="rent-card">
+      <div class="rent-header short">Alquiler temporario</div>
+      <div class="rent-body">
+        <div class="rent-big">$<%= fmt(s.rentAnalysis.shortTerm.monthlyEstimate) %>/mes</div>
+        <div class="rent-sub">Estimado promedio</div>
+        <div class="rent-detail"><span>Ocupacion est.</span><strong><%= s.rentAnalysis.shortTerm.occupancyRate %></strong></div>
+        <div class="rent-detail"><span>Ingreso neto anual</span><strong>$<%= fmt(s.rentAnalysis.shortTerm.annualNet) %></strong></div>
+        <div class="rent-detail"><span>Rendimiento neto</span><strong><%= s.rentAnalysis.shortTerm.netYield %>%</strong></div>
+        <div style="margin-top:6px">
+          <% s.rentAnalysis.shortTerm.pros.forEach(p => { %><div class="rent-pro">+ <%= p %></div><% }) %>
+          <% s.rentAnalysis.shortTerm.cons.forEach(c => { %><div class="rent-con">- <%= c %></div><% }) %>
+        </div>
+      </div>
+    </div>
+    <div class="rent-card">
+      <div class="rent-header long">Alquiler tradicional</div>
+      <div class="rent-body">
+        <div class="rent-big">$<%= fmt(s.rentAnalysis.longTerm.monthlyEstimate) %>/mes</div>
+        <div class="rent-sub">Contrato 2-3 anos</div>
+        <div class="rent-detail"><span>Ingreso neto anual</span><strong>$<%= fmt(s.rentAnalysis.longTerm.annualNet) %></strong></div>
+        <div class="rent-detail"><span>Rendimiento neto</span><strong><%= s.rentAnalysis.longTerm.netYield %>%</strong></div>
+        <div class="rent-detail"><span>Recupero inversion</span><strong><%= s.rentAnalysis.breakEvenYears %> anos</strong></div>
+        <div style="margin-top:6px">
+          <% s.rentAnalysis.longTerm.pros.forEach(p => { %><div class="rent-pro">+ <%= p %></div><% }) %>
+          <% s.rentAnalysis.longTerm.cons.forEach(c => { %><div class="rent-con">- <%= c %></div><% }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if (r.features && r.features.length) { %>
+<div class="section">
+  <h3>Caracteristicas detectadas por la IA</h3>
+  <div class="tags">
+    <% r.features.forEach(f => { %><span class="tag"><%= f %></span><% }) %>
+  </div>
+</div>
+<% } %>
+
+<% if (r.positives && r.positives.length) { %>
+<div class="section">
+  <h3>Aspectos positivos</h3>
+  <ul class="full-list list-positive">
+    <% r.positives.forEach(p => { %><li><%= p %></li><% }) %>
+  </ul>
+</div>
+<% } %>
+
+<% if (r.negatives && r.negatives.length) { %>
+<div class="section">
+  <h3>Aspectos a considerar</h3>
+  <ul class="full-list list-negative">
+    <% r.negatives.forEach(n => { %><li><%= n %></li><% }) %>
+  </ul>
+</div>
+<% } %>
+
+<% if (r.photographyTips || r.stagingAdvice) { %>
+<div class="section">
+  <h3>Tips para la venta</h3>
+  <% if (r.photographyTips) { %><p><strong>Fotos:</strong> <%= r.photographyTips %></p><% } %>
+  <% if (r.stagingAdvice) { %><p style="margin-top:4px"><strong>Staging:</strong> <%= r.stagingAdvice %></p><% } %>
+</div>
+<% } %>
+
+<!-- MARKET DATA -->
+<div class="section">
+  <h3>Datos del barrio</h3>
+  <div class="detail-row"><span>Ranking en CABA</span><strong>#<%= r.rank %> de <%= r.totalBarrios %></strong></div>
+  <div class="detail-row"><span>Precio/m2</span><strong>$<%= fmt(r.pricePerM2) %></strong></div>
+  <div class="detail-row"><span>Tendencia anual</span><strong class="trend-up">+<%= r.trend %>%</strong></div>
+  <div class="detail-row"><span>Propiedades en venta</span><strong><%= fmt(r.inventory.forSale) %></strong></div>
+  <div class="detail-row"><span>Propiedades en alquiler</span><strong><%= fmt(r.inventory.forRent) %></strong></div>
+  <div class="detail-row"><span>Comprador objetivo</span><strong><%= s.targetBuyer %></strong></div>
+  <div class="detail-row"><span>Margen negociacion</span><strong><%= s.negotiationMargin %></strong></div>
+  <p style="margin-top:10px"><%= s.marketInsight %></p>
+</div>
+
+<% if (r.similarBarrios && r.similarBarrios.length) { %>
+<div class="section">
+  <h3>Barrios similares</h3>
+  <div class="comparison-grid">
+    <% r.similarBarrios.forEach(sb => {
+      const diff = sb.pricePerM2 - r.neighborhoodAvg;
+      const pct = ((diff / r.neighborhoodAvg) * 100).toFixed(1);
+    %>
+    <div class="comparison-card">
+      <div class="cc-name"><%= sb.name %></div>
+      <div class="cc-price">$<%= fmt(sb.pricePerM2) %>/m2</div>
+      <div class="cc-diff <%= diff < 0 ? 'cheaper' : 'pricier' %>"><%= diff > 0 ? '+' : '' %><%= pct %>%</div>
+      <div style="font-size:11px;color:#999;margin-top:3px">Tendencia: +<%= sb.trend %>%</div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<% } %>
+
+<% if (r.highlights && r.highlights.length) { %>
+<div class="section">
+  <h3>Destacados del barrio</h3>
+  <ul class="highlights">
+    <% r.highlights.forEach(h => { %>
+    <li><span class="bullet"></span><%= h %></li>
+    <% }) %>
+  </ul>
+</div>
+<% } %>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <p>Este informe es una estimacion generada por inteligencia artificial basada en datos de mercado publicos. No constituye una tasacion formal ni reemplaza la evaluacion de un profesional matriculado. Los valores son orientativos y pueden variar segun condiciones especificas del inmueble. Datos de mercado actualizados al <%= new Date().toLocaleDateString('es-AR') %>. Fuentes: analisis de mercado ZonaProp, Argenprop, IDECBA.</p>
+  <p class="brand">TasaBA — Valuacion inmobiliaria inteligente para Buenos Aires</p>
+</div>
+
+</body>
+</html>

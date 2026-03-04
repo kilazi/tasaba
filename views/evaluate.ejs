@@ -39,6 +39,10 @@
 
       <form id="evalForm" enctype="multipart/form-data">
         <!-- Property details FIRST -->
+        <div class="form-group">
+          <label class="form-label">Direccion</label>
+          <input class="form-input" name="address" type="text" placeholder="Ej: Av. Rivadavia 5200, Caballito">
+        </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Barrio</label>
@@ -69,8 +73,23 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Amenities (opcional)</label>
-          <input class="form-input" name="amenities" type="text" placeholder="Ej: balcon, cochera, pileta, SUM, laundry">
+          <label class="form-label">Amenities (selecciona las que aplican)</label>
+          <div class="amenities-chips" id="amenitiesChips">
+            <label class="chip"><input type="checkbox" name="amenity" value="balcon"><span>Balcon</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="cochera"><span>Cochera</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="pileta"><span>Pileta</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="sum"><span>SUM</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="laundry"><span>Laundry</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="terraza"><span>Terraza</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="gimnasio"><span>Gimnasio</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="seguridad"><span>Seguridad 24h</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="baulera"><span>Baulera</span></label>
+            <label class="chip"><input type="checkbox" name="amenity" value="parrilla"><span>Parrilla</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas adicionales <span style="font-weight:400;color:var(--text-muted)">(opcional)</span></label>
+          <textarea class="form-input" name="notes" rows="2" placeholder="Ej: reciclado a nuevo, vista al parque, a metros del subte, ultimo piso..." style="resize:vertical"></textarea>
         </div>
 
         <!-- Photos OPTIONAL below -->
@@ -80,12 +99,20 @@
             <span style="font-size:11px;color:var(--text-muted);background:var(--surface-alt);padding:2px 8px;border-radius:10px">Opcional</span>
           </div>
           <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Mejora tu valuacion con fotos. La IA analiza condicion, terminaciones y estilo para ajustar el precio.</p>
+          <div class="photo-suggestions">
+            <span>Fotos recomendadas:</span>
+            <span class="photo-tag">Living/comedor</span>
+            <span class="photo-tag">Cocina</span>
+            <span class="photo-tag">Bano principal</span>
+            <span class="photo-tag">Dormitorio</span>
+            <span class="photo-tag">Vista desde balcon</span>
+          </div>
           <div class="upload-zone upload-zone-compact" id="uploadZone">
             <input type="file" id="photoInput" name="photos" multiple accept="image/*" style="display:none">
             <div class="upload-content" id="uploadContent">
               <svg width="28" height="28" fill="none" stroke="var(--text-muted)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
               <p style="margin-top:8px;font-weight:500;font-size:14px">Arrastra fotos o hace click</p>
-              <p style="font-size:12px;color:var(--text-muted)">Living, cocina, bano, dormitorio. Hasta 5 fotos.</p>
+              <p style="font-size:12px;color:var(--text-muted)">Hasta 5 fotos. Mientras mas ambientes muestres, mejor la valuacion.</p>
             </div>
             <div id="photoPreview" class="photo-preview" style="display:none"></div>
           </div>
@@ -170,29 +197,38 @@
           <div class="premium-features">
             <div class="premium-feature">
               <div class="premium-icon">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              </div>
-              <div>
-                <strong>Inmobiliarias sugeridas</strong>
-                <p>Las 3 mejores inmobiliarias de tu zona con historial de ventas y comisiones</p>
-              </div>
-            </div>
-            <div class="premium-feature">
-              <div class="premium-icon">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-              </div>
-              <div>
-                <strong>Pack de fotos profesionales con IA</strong>
-                <p>Mejoramos tus fotos automaticamente: iluminacion, colores, staging virtual</p>
-              </div>
-            </div>
-            <div class="premium-feature">
-              <div class="premium-icon">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               </div>
               <div>
-                <strong>Monitoreo de mercado</strong>
-                <p>Alertas cuando cambia el precio en tu barrio o aparece competencia similar</p>
+                <strong>Forecasting avanzado</strong>
+                <p>Predicciones de precio por m2 con modelos de tendencia, estacionalidad y factores macro</p>
+              </div>
+            </div>
+            <div class="premium-feature">
+              <div class="premium-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <div>
+                <strong>Propuesta de mejor deal</strong>
+                <p>La IA te dice la estrategia optima: "alquila ahora y vende en 3 anos" con simulacion de ingresos completa</p>
+              </div>
+            </div>
+            <div class="premium-feature">
+              <div class="premium-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div>
+                <strong>Monitoreo y alertas de mercado</strong>
+                <p>Alertas cuando cambia el precio en tu zona, aparece competencia o se mueve la demanda</p>
+              </div>
+            </div>
+            <div class="premium-feature">
+              <div class="premium-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div>
+                <strong>Inmobiliarias sugeridas + staging IA</strong>
+                <p>Top 3 inmobiliarias de tu zona, pack de fotos mejoradas y staging virtual para tu publicacion</p>
               </div>
             </div>
           </div>
@@ -222,20 +258,20 @@
         <div class="premium-features">
           <div class="premium-feature">
             <div class="premium-icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             </div>
             <div>
-              <strong>Inmobiliarias sugeridas para tu zona</strong>
-              <p>Las 3 mejores con historial de ventas y comisiones</p>
+              <strong>Forecasting avanzado + propuesta de mejor deal</strong>
+              <p>La IA simula todos los escenarios y te recomienda la estrategia optima con proyeccion de ingresos</p>
             </div>
           </div>
           <div class="premium-feature">
             <div class="premium-icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
             <div>
-              <strong>Pack de fotos mejoradas con IA</strong>
-              <p>Staging virtual, iluminacion optimizada, fotos listas para publicar</p>
+              <strong>Monitoreo de mercado + inmobiliarias + staging IA</strong>
+              <p>Alertas de precios, top inmobiliarias de tu zona, fotos profesionales y staging virtual</p>
             </div>
           </div>
         </div>
@@ -258,6 +294,7 @@
 <script>
 const fmt = n => n.toLocaleString('en-US');
 let currentEvalId = null;
+let currentAddress = '';
 
 // Photo upload
 const zone = document.getElementById('uploadZone');
@@ -323,6 +360,11 @@ document.getElementById('evalForm').addEventListener('submit', async e => {
   const form = e.target;
   const fd = new FormData(form);
 
+  // Collect amenities from chips
+  const amenities = Array.from(document.querySelectorAll('[name="amenity"]:checked')).map(c => c.value).join(', ');
+  fd.delete('amenity');
+  fd.set('amenities', amenities);
+
   fd.delete('photos');
   selectedFiles.forEach(f => fd.append('photos', f));
 
@@ -350,6 +392,7 @@ function showTeaser(data) {
 
   const t = data.teaser;
   currentEvalId = data.evalId;
+  currentAddress = document.querySelector('[name="address"]').value || t.neighborhood;
   document.getElementById('teaser-neighborhood').textContent = t.neighborhood + ' — ' + t.zone;
   document.getElementById('teaser-price').textContent = 'USD $' + fmt(t.estimatedPrice);
   document.getElementById('teaser-range').innerHTML = `<span>$${fmt(t.priceRange.low)}</span> — <span>$${fmt(t.priceRange.high)}</span>`;
@@ -404,7 +447,7 @@ function showFullReport(r) {
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <h2>Informe completo</h2>
-          <div style="color:var(--text-secondary)">${r.neighborhood} — ${r.zone} — ${r.m2}m2</div>
+          <div style="color:var(--text-secondary)">${r.address ? r.address + ' — ' : ''}${r.neighborhood} — ${r.zone} — ${r.m2}m2</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Generado por IA</div>
@@ -604,7 +647,10 @@ async function downloadPdf() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `TasaBA-Informe-${currentEvalId}.pdf`;
+    // Extract filename from Content-Disposition header or build from address
+    const cd = res.headers.get('content-disposition');
+    const fnMatch = cd && cd.match(/filename="?([^"]+)"?/);
+    a.download = fnMatch ? fnMatch[1] : `TasaBA-${currentAddress.replace(/[^a-zA-Z0-9\s-]/g,'').replace(/\s+/g,'-')}.pdf`;
     a.click();
     URL.revokeObjectURL(url);
   } catch(err) {

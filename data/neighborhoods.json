@@ -8,7 +8,7 @@
       "name": "Palermo",
       "zone": "Norte",
       "pricePerM2": { "avg": 3020, "min": 2400, "max": 3800, "trend": 2.1 },
-      "pricePerM2Rent": { "avg": 12.5, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 14.1, "mono": 19.6, "dos": 14.1, "tres": 11.4, "currency": "USD/m2/month" },
       "inventory": { "forSale": 4820, "forRent": 2150 },
       "typology": {
         "monoambiente": { "avgPrice": 95000, "avgM2": 32, "pricePerM2": 2969 },
@@ -27,7 +27,7 @@
       "name": "Recoleta",
       "zone": "Norte",
       "pricePerM2": { "avg": 2850, "min": 2200, "max": 3600, "trend": 1.4 },
-      "pricePerM2Rent": { "avg": 11.8, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 13.2, "mono": 18.6, "dos": 13.2, "tres": 10.5, "currency": "USD/m2/month" },
       "inventory": { "forSale": 3960, "forRent": 1680 },
       "typology": {
         "monoambiente": { "avgPrice": 88000, "avgM2": 30, "pricePerM2": 2933 },
@@ -46,7 +46,7 @@
       "name": "Belgrano",
       "zone": "Norte",
       "pricePerM2": { "avg": 2680, "min": 2100, "max": 3400, "trend": 1.8 },
-      "pricePerM2Rent": { "avg": 10.5, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 13.3, "mono": 18.8, "dos": 13.3, "tres": 10.5, "currency": "USD/m2/month" },
       "inventory": { "forSale": 3240, "forRent": 1420 },
       "typology": {
         "monoambiente": { "avgPrice": 82000, "avgM2": 30, "pricePerM2": 2733 },
@@ -65,7 +65,7 @@
       "name": "Caballito",
       "zone": "Centro-Oeste",
       "pricePerM2": { "avg": 2050, "min": 1600, "max": 2600, "trend": 3.2 },
-      "pricePerM2Rent": { "avg": 8.2, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 11.4, "mono": 17.2, "dos": 11.4, "tres": 9.1, "currency": "USD/m2/month" },
       "inventory": { "forSale": 2890, "forRent": 1350 },
       "typology": {
         "monoambiente": { "avgPrice": 62000, "avgM2": 30, "pricePerM2": 2067 },
@@ -84,7 +84,7 @@
       "name": "Villa Crespo",
       "zone": "Centro",
       "pricePerM2": { "avg": 2380, "min": 1900, "max": 2900, "trend": 4.1 },
-      "pricePerM2Rent": { "avg": 9.5, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 11.6, "mono": 16.8, "dos": 11.6, "tres": 9.1, "currency": "USD/m2/month" },
       "inventory": { "forSale": 1850, "forRent": 920 },
       "typology": {
         "monoambiente": { "avgPrice": 72000, "avgM2": 30, "pricePerM2": 2400 },
@@ -103,7 +103,7 @@
       "name": "Nunez",
       "zone": "Norte",
       "pricePerM2": { "avg": 2520, "min": 2000, "max": 3100, "trend": 2.5 },
-      "pricePerM2Rent": { "avg": 10.0, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 13.9, "mono": 20.0, "dos": 13.9, "tres": 10.9, "currency": "USD/m2/month" },
       "inventory": { "forSale": 1680, "forRent": 720 },
       "typology": {
         "monoambiente": { "avgPrice": 78000, "avgM2": 31, "pricePerM2": 2516 },
@@ -122,7 +122,7 @@
       "name": "San Telmo",
       "zone": "Sur",
       "pricePerM2": { "avg": 2150, "min": 1700, "max": 2800, "trend": 3.8 },
-      "pricePerM2Rent": { "avg": 9.0, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 11.4, "mono": 16.6, "dos": 11.4, "tres": 8.9, "currency": "USD/m2/month" },
       "inventory": { "forSale": 1420, "forRent": 780 },
       "typology": {
         "monoambiente": { "avgPrice": 65000, "avgM2": 28, "pricePerM2": 2321 },
@@ -141,7 +141,7 @@
       "name": "Almagro",
       "zone": "Centro",
       "pricePerM2": { "avg": 1950, "min": 1500, "max": 2500, "trend": 2.8 },
-      "pricePerM2Rent": { "avg": 7.8, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 11.2, "mono": 16.2, "dos": 11.2, "tres": 8.7, "currency": "USD/m2/month" },
       "inventory": { "forSale": 2100, "forRent": 1050 },
       "typology": {
         "monoambiente": { "avgPrice": 58000, "avgM2": 29, "pricePerM2": 2000 },
@@ -160,7 +160,7 @@
       "name": "Villa Urquiza",
       "zone": "Norte",
       "pricePerM2": { "avg": 2350, "min": 1800, "max": 2900, "trend": 3.5 },
-      "pricePerM2Rent": { "avg": 9.2, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 12.3, "mono": 18.0, "dos": 12.3, "tres": 10.4, "currency": "USD/m2/month" },
       "inventory": { "forSale": 2200, "forRent": 980 },
       "typology": {
         "monoambiente": { "avgPrice": 70000, "avgM2": 30, "pricePerM2": 2333 },
@@ -179,7 +179,7 @@
       "name": "Colegiales",
       "zone": "Norte",
       "pricePerM2": { "avg": 2580, "min": 2100, "max": 3200, "trend": 2.9 },
-      "pricePerM2Rent": { "avg": 10.2, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 13.4, "mono": 18.8, "dos": 13.4, "tres": 10.5, "currency": "USD/m2/month" },
       "inventory": { "forSale": 1150, "forRent": 520 },
       "typology": {
         "monoambiente": { "avgPrice": 80000, "avgM2": 30, "pricePerM2": 2667 },
@@ -198,7 +198,7 @@
       "name": "Flores",
       "zone": "Oeste",
       "pricePerM2": { "avg": 1620, "min": 1200, "max": 2100, "trend": 1.5 },
-      "pricePerM2Rent": { "avg": 6.5, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 10.7, "mono": 15.2, "dos": 10.7, "tres": 8.1, "currency": "USD/m2/month" },
       "inventory": { "forSale": 2450, "forRent": 1100 },
       "typology": {
         "monoambiente": { "avgPrice": 48000, "avgM2": 28, "pricePerM2": 1714 },
@@ -217,7 +217,7 @@
       "name": "Liniers",
       "zone": "Oeste",
       "pricePerM2": { "avg": 1480, "min": 1100, "max": 1900, "trend": 2.0 },
-      "pricePerM2Rent": { "avg": 5.8, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 10.8, "mono": 14.6, "dos": 10.8, "tres": 7.9, "currency": "USD/m2/month" },
       "inventory": { "forSale": 1280, "forRent": 580 },
       "typology": {
         "monoambiente": { "avgPrice": 42000, "avgM2": 28, "pricePerM2": 1500 },
@@ -236,7 +236,7 @@
       "name": "Mataderos",
       "zone": "Oeste",
       "pricePerM2": { "avg": 1380, "min": 1000, "max": 1800, "trend": 1.8 },
-      "pricePerM2Rent": { "avg": 5.5, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 10.3, "mono": 14.6, "dos": 10.3, "tres": 7.9, "currency": "USD/m2/month" },
       "inventory": { "forSale": 980, "forRent": 420 },
       "typology": {
         "monoambiente": { "avgPrice": 40000, "avgM2": 28, "pricePerM2": 1429 },
@@ -255,7 +255,7 @@
       "name": "Barracas",
       "zone": "Sur",
       "pricePerM2": { "avg": 1720, "min": 1300, "max": 2200, "trend": 4.5 },
-      "pricePerM2Rent": { "avg": 7.0, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 11.0, "mono": 15.8, "dos": 11.0, "tres": 8.4, "currency": "USD/m2/month" },
       "inventory": { "forSale": 1150, "forRent": 520 },
       "typology": {
         "monoambiente": { "avgPrice": 52000, "avgM2": 29, "pricePerM2": 1793 },
@@ -274,7 +274,7 @@
       "name": "Villa Luro",
       "zone": "Oeste",
       "pricePerM2": { "avg": 1580, "min": 1200, "max": 2000, "trend": 2.2 },
-      "pricePerM2Rent": { "avg": 6.2, "currency": "USD/m2/month" },
+      "pricePerM2Rent": { "avg": 10.4, "mono": 14.8, "dos": 10.4, "tres": 8.0, "currency": "USD/m2/month" },
       "inventory": { "forSale": 850, "forRent": 380 },
       "typology": {
         "monoambiente": { "avgPrice": 46000, "avgM2": 28, "pricePerM2": 1643 },
