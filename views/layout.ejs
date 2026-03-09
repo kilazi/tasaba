@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof title !== 'undefined' ? title + ' — TasaBA' : 'TasaBA — Valor del metro cuadrado en Buenos Aires' %></title>
   <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Informes de valuacion inmobiliaria por barrio en Buenos Aires. Precio por metro cuadrado, tendencias y analisis de mercado.' %>">
-  <link rel="canonical" href="<%= typeof canonical !== 'undefined' ? canonical : 'https://tasaba-473141067823.us-central1.run.app' %>">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="<%= typeof title !== 'undefined' ? title + ' — TasaBA' : 'TasaBA — Valor del metro cuadrado en Buenos Aires' %>">
+  <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Informes de valuacion inmobiliaria por barrio en Buenos Aires. Precio por metro cuadrado, tendencias y analisis de mercado.' %>">
+  <meta property="og:url" content="<%= typeof canonical !== 'undefined' ? canonical : 'https://tasaba.etthore.com' %>">
+  <meta property="og:locale" content="es_AR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title + ' — TasaBA' : 'TasaBA — Valor del metro cuadrado en Buenos Aires' %>">
+  <meta name="twitter:description" content="<%= typeof description !== 'undefined' ? description : 'Informes de valuacion inmobiliaria por barrio en Buenos Aires.' %>">
+  <link rel="canonical" href="<%= typeof canonical !== 'undefined' ? canonical : 'https://tasaba.etthore.com' %>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><path d='M6 18l10-10 10 10' stroke='white' stroke-width='2.5' fill='none'/><rect x='12' y='16' width='8' height='10' rx='1' fill='white' opacity='.9'/><rect x='14' y='18' width='4' height='4' rx='.5' fill='%231a365d'/></svg>">

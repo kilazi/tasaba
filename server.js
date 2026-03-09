@@ -419,7 +419,7 @@ app.get('/api/report/:evalId/pdf', async (req, res) => {
 
 // Sitemap
 app.get('/sitemap.xml', (req, res) => {
-  const base = 'https://tasaba-473141067823.us-central1.run.app';
+  const base = 'https://tasaba.etthore.com';
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   xml += `<url><loc>${base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n`;
   xml += `<url><loc>${base}/evaluar</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>\n`;
@@ -429,6 +429,10 @@ app.get('/sitemap.xml', (req, res) => {
   });
   xml += '</urlset>';
   res.type('application/xml').send(xml);
+});
+
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send('User-agent: *\nAllow: /\nSitemap: https://tasaba.etthore.com/sitemap.xml');
 });
 
 app.use((req, res) => { res.status(404).render('404'); });
