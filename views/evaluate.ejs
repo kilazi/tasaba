@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evaluar propiedad — TasaBA</title>
+  <title>Evaluar propiedad — Tasalo</title>
   <meta name="description" content="Evalua tu propiedad en Buenos Aires con inteligencia artificial. Gratis, rapido y basado en datos de mercado actuales.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><path d='M6 18l10-10 10 10' stroke='white' stroke-width='2.5' fill='none'/><rect x='12' y='16' width='8' height='10' rx='1' fill='white' opacity='.9'/><rect x='14' y='18' width='4' height='4' rx='.5' fill='%231a365d'/></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
         <rect x="12" y="16" width="8" height="10" rx="1" fill="white" opacity=".9"/>
         <rect x="14" y="18" width="4" height="4" rx=".5" fill="#1a365d"/>
       </svg>
-      TasaBA
+      Tasalo
     </a>
     <button class="nav-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Menu">
       <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -304,7 +304,7 @@
         <div class="premium-teaser">
           <div class="premium-header">
             <span class="premium-badge">Proximamente</span>
-            <h3>TasaBA Premium</h3>
+            <h3>Tasalo Premium</h3>
           </div>
           <div class="premium-features">
             <div class="premium-feature">
@@ -365,7 +365,7 @@
       <div class="premium-teaser" style="margin-top:20px">
         <div class="premium-header">
           <span class="premium-badge">Proximamente</span>
-          <h3>TasaBA Premium</h3>
+          <h3>Tasalo Premium</h3>
         </div>
         <div class="premium-features">
           <div class="premium-feature">
@@ -881,7 +881,7 @@ async function downloadPdf() {
     // Extract filename from Content-Disposition header or build from address
     const cd = res.headers.get('content-disposition');
     const fnMatch = cd && cd.match(/filename="?([^"]+)"?/);
-    a.download = fnMatch ? fnMatch[1] : `TasaBA-${currentAddress.replace(/[^a-zA-Z0-9\s-]/g,'').replace(/\s+/g,'-')}.pdf`;
+    a.download = fnMatch ? fnMatch[1] : `Tasalo-${currentAddress.replace(/[^a-zA-Z0-9\s-]/g,'').replace(/\s+/g,'-')}.pdf`;
     a.click();
     URL.revokeObjectURL(url);
   } catch(err) {

@@ -585,7 +585,7 @@ app.get('/api/report/:evalId/pdf', async (req, res) => {
     const label = (r.address || r.neighborhood || 'propiedad')
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '-').substring(0, 60);
-    const filename = `TasaBA-${label}-${r.m2}m2.pdf`;
+    const filename = `Tasalo-${label}-${r.m2}m2.pdf`;
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
@@ -616,4 +616,4 @@ app.get('/robots.txt', (req, res) => {
 
 app.use((req, res) => { res.status(404).render('404', { ga4Id: GA4_ID }); });
 
-app.listen(PORT, () => { console.log(`TasaBA running on port ${PORT}`); });
+app.listen(PORT, () => { console.log(`Tasalo running on port ${PORT}`); });

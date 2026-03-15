@@ -1,4 +1,4 @@
-// TasaBA — Client-side JS
+// Tasalo — Client-side JS
 
 function showToast(msg) {
   const t = document.getElementById('toast');
