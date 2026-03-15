@@ -81,6 +81,7 @@ function applyConditionQuiz(estimate, quiz) {
 }
 
 // Generate improvement suggestions based on quiz answers
+// Costs in ARS (March 2026 reference)
 function generateSuggestions(quiz, estimate) {
   if (!quiz || Object.keys(quiz).length === 0) return [];
   const suggestions = [];
@@ -89,9 +90,9 @@ function generateSuggestions(quiz, estimate) {
   if (quiz.humidity === 'moderate' || quiz.humidity === 'severe') {
     const impact = quiz.humidity === 'severe' ? 10 : 5;
     suggestions.push({
-      issue: 'Humedad ' + (quiz.humidity === 'severe' ? 'severa' : 'moderada'),
+      issue: 'Reparar humedad' + (quiz.humidity === 'severe' ? ' severa' : ''),
       action: 'Reparar filtraciones, aplicar tratamiento antihumedad y repintar paredes afectadas',
-      cost: quiz.humidity === 'severe' ? '$800 - $2,500 USD' : '$300 - $800 USD',
+      cost: quiz.humidity === 'severe' ? '~$1.000.000 - $3.000.000 ARS' : '~$350.000 - $950.000 ARS',
       valueIncrease: Math.round(mid * impact / 100),
       impactPct: '+' + impact + '%',
       priority: 'alta'
@@ -100,9 +101,9 @@ function generateSuggestions(quiz, estimate) {
 
   if (quiz.gasReplaced === 'no') {
     suggestions.push({
-      issue: 'Instalacion de gas sin reemplazar',
+      issue: 'Reemplazar instalacion de gas',
       action: 'Reemplazar canerias de gas y obtener certificado de instalacion (obligatorio para escriturar)',
-      cost: '$500 - $1,200 USD',
+      cost: '~$600.000 - $1.500.000 ARS',
       valueIncrease: Math.round(mid * 4 / 100),
       impactPct: '+4%',
       priority: 'alta'
@@ -112,11 +113,11 @@ function generateSuggestions(quiz, estimate) {
   if (quiz.kitchen === 'needs_renovation' || quiz.kitchen === 'fair') {
     const impact = quiz.kitchen === 'needs_renovation' ? 8 : 4;
     suggestions.push({
-      issue: 'Cocina ' + (quiz.kitchen === 'needs_renovation' ? 'necesita renovacion' : 'en condicion regular'),
+      issue: quiz.kitchen === 'needs_renovation' ? 'Renovar cocina completa' : 'Actualizar cocina',
       action: quiz.kitchen === 'needs_renovation'
         ? 'Renovacion completa: mesada, bajo mesada, griferias y revestimiento'
         : 'Pintar muebles, cambiar griferias y actualizar iluminacion',
-      cost: quiz.kitchen === 'needs_renovation' ? '$2,000 - $5,000 USD' : '$500 - $1,500 USD',
+      cost: quiz.kitchen === 'needs_renovation' ? '~$2.500.000 - $6.000.000 ARS' : '~$600.000 - $1.800.000 ARS',
       valueIncrease: Math.round(mid * impact / 100),
       impactPct: '+' + impact + '%',
       priority: quiz.kitchen === 'needs_renovation' ? 'alta' : 'media'
@@ -126,11 +127,11 @@ function generateSuggestions(quiz, estimate) {
   if (quiz.bathroom === 'needs_renovation' || quiz.bathroom === 'fair') {
     const impact = quiz.bathroom === 'needs_renovation' ? 7 : 3;
     suggestions.push({
-      issue: 'Bano ' + (quiz.bathroom === 'needs_renovation' ? 'necesita renovacion' : 'en condicion regular'),
+      issue: quiz.bathroom === 'needs_renovation' ? 'Renovar bano completo' : 'Actualizar bano',
       action: quiz.bathroom === 'needs_renovation'
         ? 'Renovacion completa: sanitarios, griferias, revestimientos y vanitory'
         : 'Actualizar griferias, re-sellar juntas y mejorar iluminacion',
-      cost: quiz.bathroom === 'needs_renovation' ? '$1,500 - $4,000 USD' : '$300 - $800 USD',
+      cost: quiz.bathroom === 'needs_renovation' ? '~$1.800.000 - $5.000.000 ARS' : '~$350.000 - $950.000 ARS',
       valueIncrease: Math.round(mid * impact / 100),
       impactPct: '+' + impact + '%',
       priority: quiz.bathroom === 'needs_renovation' ? 'alta' : 'media'
@@ -140,11 +141,11 @@ function generateSuggestions(quiz, estimate) {
   if (quiz.floors === 'needs_renovation' || quiz.floors === 'fair') {
     const impact = quiz.floors === 'needs_renovation' ? 5 : 2;
     suggestions.push({
-      issue: 'Pisos ' + (quiz.floors === 'needs_renovation' ? 'necesitan renovacion' : 'en condicion regular'),
+      issue: quiz.floors === 'needs_renovation' ? 'Renovar pisos' : 'Pulir pisos',
       action: quiz.floors === 'needs_renovation'
         ? 'Pulir y plastificar pisos de madera, o reemplazar con porcelanato'
         : 'Pulir pisos existentes y reparar zonas danadas',
-      cost: quiz.floors === 'needs_renovation' ? '$1,000 - $3,000 USD' : '$400 - $1,000 USD',
+      cost: quiz.floors === 'needs_renovation' ? '~$1.200.000 - $3.600.000 ARS' : '~$480.000 - $1.200.000 ARS',
       valueIncrease: Math.round(mid * impact / 100),
       impactPct: '+' + impact + '%',
       priority: 'media'
@@ -153,9 +154,9 @@ function generateSuggestions(quiz, estimate) {
 
   if (quiz.naturalLight === 'limited' || quiz.naturalLight === 'poor') {
     suggestions.push({
-      issue: 'Luz natural ' + (quiz.naturalLight === 'poor' ? 'pobre' : 'limitada'),
+      issue: 'Mejorar iluminacion',
       action: 'Pintar paredes en colores claros, agregar espejos estrategicos, mejorar iluminacion LED',
-      cost: '$200 - $600 USD',
+      cost: '~$240.000 - $720.000 ARS',
       valueIncrease: Math.round(mid * 2 / 100),
       impactPct: '+2%',
       priority: 'baja'
@@ -165,9 +166,9 @@ function generateSuggestions(quiz, estimate) {
   if (quiz.maintenance === 'poor' || quiz.maintenance === 'fair') {
     const impact = quiz.maintenance === 'poor' ? 6 : 3;
     suggestions.push({
-      issue: 'Mantenimiento general ' + (quiz.maintenance === 'poor' ? 'deficiente' : 'regular'),
+      issue: quiz.maintenance === 'poor' ? 'Mantenimiento general urgente' : 'Mantenimiento general',
       action: 'Pintura completa, reparar aberturas, sellar ventanas, arreglar detalles visibles',
-      cost: quiz.maintenance === 'poor' ? '$1,000 - $2,500 USD' : '$400 - $1,000 USD',
+      cost: quiz.maintenance === 'poor' ? '~$1.200.000 - $3.000.000 ARS' : '~$480.000 - $1.200.000 ARS',
       valueIncrease: Math.round(mid * impact / 100),
       impactPct: '+' + impact + '%',
       priority: quiz.maintenance === 'poor' ? 'alta' : 'media'
@@ -190,7 +191,7 @@ function calculateRealValue(estimate) {
     realLow: Math.round(estimate.low * listingDiscount),
     realHigh: Math.round(estimate.high * listingDiscount),
     discount: 20,
-    context: 'De las 160,000 propiedades publicadas en Buenos Aires, solo el 6% se vende. El precio real de mercado esta tipicamente 15-20% por debajo del precio de publicacion. Este es el precio al que los compradores realmente cierran.'
+    context: 'De las 160.000 propiedades publicadas en Buenos Aires, solo el 6% se vende. El precio real de mercado refleja lo que compradores realmente pagan.'
   };
 }
 
