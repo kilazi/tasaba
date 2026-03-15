@@ -172,6 +172,29 @@ const typologies = [
   </div>
 </section>
 
+${n.officialData && n.officialData.appreciationSince ? `
+<section class="section">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom:20px">Datos oficiales del Gobierno de Buenos Aires</h2>
+    <div class="card" style="max-width:600px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:14px;font-weight:600">Precio oficial (${n.officialData.appreciationSince.period})</span>
+        <strong style="font-size:18px;color:var(--accent)">$${fmt(n.officialData.appreciationSince.from)}/m2</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:14px;font-weight:600">Precio actual de mercado</span>
+        <strong style="font-size:18px;color:var(--accent)">$${fmt(n.officialData.appreciationSince.to)}/m2</strong>
+      </div>
+      <div style="background:${n.officialData.appreciationSince.changePercent >= 0 ? 'var(--green-bg)' : '#fef2f2'};border-radius:var(--radius-sm);padding:10px 14px;text-align:center">
+        <span style="font-size:16px;font-weight:700;color:${n.officialData.appreciationSince.changePercent >= 0 ? 'var(--green)' : 'var(--red)'}">
+          ${n.officialData.appreciationSince.changePercent >= 0 ? '+' : ''}${n.officialData.appreciationSince.changePercent}% desde ${n.officialData.appreciationSince.period}
+        </span>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:10px">Fuente: ${n.officialData.source}</p>
+    </div>
+  </div>
+</section>` : ''}
+
 <section class="section">
   <div class="container" style="text-align:center">
     <h2 class="section-title" style="margin-bottom:12px">Tasar propiedad en ${n.name}</h2>

@@ -807,6 +807,38 @@ function showFullReport(r) {
     <p style="margin-top:12px;font-size:13px;color:var(--text-secondary)">${s.marketInsight}</p>
   </div>`;
 
+  // OFFICIAL GOVERNMENT DATA
+  if (r.officialData) {
+    html += `<div class="full-section"><h3>Datos oficiales del Gobierno de Buenos Aires</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Fuente: ${r.officialData.source}</p>`;
+    if (r.officialData.appreciationSince) {
+      const a = r.officialData.appreciationSince;
+      html += `
+        <div style="background:${a.changePercent >= 0 ? 'var(--green-bg)' : '#fef2f2'};border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:14px;font-weight:700;color:${a.changePercent >= 0 ? 'var(--green)' : 'var(--red)'}">
+            ${a.changePercent >= 0 ? '+' : ''}${a.changePercent}% desde ${a.period}
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px">
+            Precio oficial ${a.period}: $${fmt(a.from)}/m2 — Precio actual: $${fmt(a.to)}/m2
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-secondary)">
+          ${a.changePercent < 0
+            ? 'El mercado inmobiliario de Buenos Aires ha experimentado una correccion significativa desde 2019 debido a factores macroeconomicos. Los precios actuales estan por debajo de los maximos historicos, lo que puede representar una oportunidad de compra o un momento para evaluar estrategias de venta con cuidado.'
+            : 'El barrio ha sostenido o superado los valores oficiales, indicando una demanda solida y potencial de crecimiento continuo.'}
+        </p>`;
+    }
+    if (r.officialData.prices) {
+      const prices = r.officialData.prices;
+      html += `<div style="margin-top:12px">`;
+      for (const [tipo, data] of Object.entries(prices)) {
+        html += `<div class="teaser-detail-row"><span>${tipo} (oficial ${data.period})</span><strong>$${fmt(data.pricePerM2)}/m2</strong></div>`;
+      }
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+
   // SIMILAR BARRIOS
   if (r.similarBarrios && r.similarBarrios.length) {
     html += `<div class="full-section"><h3>Barrios similares</h3><div class="comparison-cards">

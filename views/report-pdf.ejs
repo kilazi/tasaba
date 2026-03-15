@@ -384,6 +384,21 @@
   <p style="margin-top:10px"><%= s.marketInsight %></p>
 </div>
 
+<% if (r.officialData && r.officialData.appreciationSince) { %>
+<div class="section">
+  <h3>Datos oficiales — Gobierno de Buenos Aires</h3>
+  <div style="background:<%= r.officialData.appreciationSince.changePercent >= 0 ? '#f0fdf4' : '#fef2f2' %>;border-radius:6px;padding:8px 12px;margin-bottom:8px">
+    <span style="font-size:12px;font-weight:700;color:<%= r.officialData.appreciationSince.changePercent >= 0 ? '#16a34a' : '#dc2626' %>">
+      <%= r.officialData.appreciationSince.changePercent >= 0 ? '+' : '' %><%= r.officialData.appreciationSince.changePercent %>% desde <%= r.officialData.appreciationSince.period %>
+    </span>
+    <span style="font-size:10px;color:#999;margin-left:8px">
+      $<%= fmt(r.officialData.appreciationSince.from) %>/m2 → $<%= fmt(r.officialData.appreciationSince.to) %>/m2
+    </span>
+  </div>
+  <p style="font-size:11px;color:#999">Fuente: <%= r.officialData.source %></p>
+</div>
+<% } %>
+
 <% if (r.similarBarrios && r.similarBarrios.length) { %>
 <div class="section">
   <h3>Barrios similares</h3>

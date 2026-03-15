@@ -489,7 +489,8 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
         .filter(x => x.slug !== n.slug)
         .sort((a, b) => Math.abs(a.pricePerM2.avg - n.pricePerM2.avg) - Math.abs(b.pricePerM2.avg - n.pricePerM2.avg))
         .slice(0, 3)
-        .map(s => ({ name: s.name, pricePerM2: s.pricePerM2.avg, trend: s.pricePerM2.trend }))
+        .map(s => ({ name: s.name, pricePerM2: s.pricePerM2.avg, trend: s.pricePerM2.trend })),
+      officialData: n.officialData || null
     };
 
     // Store evaluation for later retrieval
