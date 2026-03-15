@@ -18,9 +18,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"TasaBA","url":"https://tasaba.etthore.com","description":"Valuacion inmobiliaria inteligente para Buenos Aires","applicationCategory":"BusinessApplication","operatingSystem":"Web"}</script>
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TASABA01"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TASABA01');</script>
+  <% if (typeof ga4Id !== 'undefined' && ga4Id) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga4Id %>"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<%= ga4Id %>');</script>
+  <% } %>
 </head>
 <body>
 

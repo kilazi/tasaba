@@ -20,6 +20,7 @@ async function getBrowser() {
 const app = express();
 const PORT = process.env.PORT || 8080;
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
+const GA4_ID = process.env.GA4_ID || '';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024, files: 5 } });
 
@@ -365,22 +366,22 @@ Responde en espanol rioplatense profesional. Devuelve SOLO JSON valido con estos
 app.get('/', (req, res) => {
   const avgPrice = Math.round(neighborhoods.reduce((s, n) => s + n.pricePerM2.avg, 0) / neighborhoods.length);
   const totalInventory = neighborhoods.reduce((s, n) => s + n.inventory.forSale, 0);
-  res.render('home', { neighborhoods, avgPrice, totalInventory, fmt, lastUpdated: neighborhoodData.lastUpdated });
+  res.render('home', { neighborhoods, avgPrice, totalInventory, fmt, lastUpdated: neighborhoodData.lastUpdated, ga4Id: GA4_ID });
 });
 
 // Pricing page
 app.get('/precios', (req, res) => {
-  res.render('pricing');
+  res.render('pricing', { ga4Id: GA4_ID });
 });
 
 // Ranking page
 app.get('/ranking', (req, res) => {
-  res.render('ranking', { neighborhoods, byPrice, byGrowth, fmt, lastUpdated: neighborhoodData.lastUpdated });
+  res.render('ranking', { neighborhoods, byPrice, byGrowth, fmt, lastUpdated: neighborhoodData.lastUpdated, ga4Id: GA4_ID });
 });
 
 // AI Evaluation tool
 app.get('/evaluar', (req, res) => {
-  res.render('evaluate', { neighborhoods, fmt });
+  res.render('evaluate', { neighborhoods, fmt, ga4Id: GA4_ID });
 });
 
 // Process AI evaluation
@@ -551,7 +552,7 @@ app.get('/barrio/:slug', (req, res) => {
   const similar = neighborhoods.filter(x => x.slug !== n.slug)
     .sort((a, b) => Math.abs(a.pricePerM2.avg - n.pricePerM2.avg) - Math.abs(b.pricePerM2.avg - n.pricePerM2.avg))
     .slice(0, 3);
-  res.render('neighborhood', { n, rank, growthRank, total: neighborhoods.length, similar, fmt, lastUpdated: neighborhoodData.lastUpdated });
+  res.render('neighborhood', { n, rank, growthRank, total: neighborhoods.length, similar, fmt, lastUpdated: neighborhoodData.lastUpdated, ga4Id: GA4_ID });
 });
 
 // PDF report download — Puppeteer renders HTML template to PDF
@@ -613,6 +614,6 @@ app.get('/robots.txt', (req, res) => {
   res.type('text/plain').send('User-agent: *\nAllow: /\nSitemap: https://tasaba.etthore.com/sitemap.xml');
 });
 
-app.use((req, res) => { res.status(404).render('404'); });
+app.use((req, res) => { res.status(404).render('404', { ga4Id: GA4_ID }); });
 
 app.listen(PORT, () => { console.log(`TasaBA running on port ${PORT}`); });

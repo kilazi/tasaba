@@ -14,7 +14,7 @@ gcloud run deploy $SERVICE \
   --memory 1Gi \
   --cpu 1 \
   --timeout 60 \
-  --set-env-vars "OPENAI_API_KEY=${OPENAI_API_KEY:-}" \
+  --set-env-vars "OPENAI_API_KEY=${OPENAI_API_KEY:-},GA4_ID=${GA4_ID:-}" \
   --min-instances 0 \
   --max-instances 3 \
   --clear-base-image
