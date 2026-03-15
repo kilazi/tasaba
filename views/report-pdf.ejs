@@ -135,8 +135,23 @@
 
 <!-- PRICE -->
 <div class="price-section">
-  <div class="price-main">USD $<%= fmt(r.estimatedPrice) %></div>
-  <div class="price-range">$<%= fmt(r.priceRange.low) %> — $<%= fmt(r.priceRange.high) %></div>
+  <div style="display:flex;justify-content:center;gap:40px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:#999;margin-bottom:2px">Precio de publicacion</div>
+      <div class="price-main">USD $<%= fmt(r.estimatedPrice) %></div>
+      <div class="price-range">$<%= fmt(r.priceRange.low) %> — $<%= fmt(r.priceRange.high) %></div>
+    </div>
+    <% if (r.realValue) { %>
+    <div>
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:#999;margin-bottom:2px">Valor real de mercado</div>
+      <div class="price-main" style="color:#16a34a">USD $<%= fmt(r.realValue.realValue) %></div>
+      <div class="price-range">$<%= fmt(r.realValue.realLow) %> — $<%= fmt(r.realValue.realHigh) %></div>
+    </div>
+    <% } %>
+  </div>
+  <% if (r.realValue) { %>
+  <p style="font-size:10px;color:#999;text-align:center;margin-top:8px;max-width:420px;margin-left:auto;margin-right:auto"><%= r.realValue.context %></p>
+  <% } %>
   <div class="metrics-row">
     <div class="metric">
       <span class="metric-val accent"><%= s.demandScore %>/100</span>
@@ -304,6 +319,55 @@
   <h3>Tips para la venta</h3>
   <% if (r.photographyTips) { %><p><strong>Fotos:</strong> <%= r.photographyTips %></p><% } %>
   <% if (r.stagingAdvice) { %><p style="margin-top:4px"><strong>Staging:</strong> <%= r.stagingAdvice %></p><% } %>
+</div>
+<% } %>
+
+<% if (r.conditionDetails && r.conditionDetails.length > 0) {
+  const factorLabels = {
+    buildingAge: 'Antiguedad', humidity: 'Humedad', gasReplaced: 'Gas', kitchen: 'Cocina',
+    bathroom: 'Bano', floors: 'Pisos', naturalLight: 'Luz natural', maintenance: 'Mantenimiento'
+  };
+  const valueLabels = {
+    '0-5': '<5 anos', '5-15': '5-15 anos', '15-30': '15-30 anos', '30-50': '30-50 anos', '50+': '50+ anos',
+    none: 'Sin humedad', mild: 'Leve', moderate: 'Moderada', severe: 'Severa',
+    yes: 'Renovada', no: 'Original', unknown: 'Desconocido',
+    excellent: 'Excelente', good: 'Bueno', fair: 'Regular', needs_renovation: 'Necesita renovacion',
+    abundant: 'Abundante', limited: 'Limitada', poor: 'Pobre'
+  };
+%>
+<div class="section">
+  <h3>Condicion del inmueble</h3>
+  <div style="background:#ebf2ff;border-radius:6px;padding:8px 12px;margin-bottom:10px">
+    <span style="font-size:12px;font-weight:700;color:#1a365d">Ajuste total por condicion: <%= r.conditionAdj > 0 ? '+' : '' %><%= r.conditionAdj %>%</span>
+  </div>
+  <% r.conditionDetails.forEach(d => { %>
+  <div class="detail-row">
+    <span><%= factorLabels[d.factor] || d.factor %>: <%= valueLabels[d.value] || d.value %></span>
+    <strong style="color:<%= d.adjustment >= 0 ? '#16a34a' : '#dc2626' %>"><%= d.adjustment > 0 ? '+' : '' %><%= d.adjustment %>%</strong>
+  </div>
+  <% }) %>
+</div>
+<% } %>
+
+<% if (r.suggestions && r.suggestions.length > 0) { %>
+<div class="section">
+  <h3>Sugerencias de mejora</h3>
+  <div style="background:#f0fdf4;border-radius:6px;padding:8px 12px;margin-bottom:10px">
+    <span style="font-size:12px;font-weight:700;color:#16a34a">Potencial de revalorizacion: +$<%= fmt(r.suggestions.reduce((s, sg) => s + sg.valueIncrease, 0)) %> USD</span>
+  </div>
+  <% r.suggestions.forEach(sg => { %>
+  <div style="padding:8px 0;border-bottom:1px solid #f0f0f2">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+      <strong style="font-size:12px"><%= sg.issue %></strong>
+      <span style="font-size:10px;font-weight:600;color:<%= sg.priority === 'alta' ? '#dc2626' : sg.priority === 'media' ? '#d97706' : '#16a34a' %>">Prioridad <%= sg.priority %></span>
+    </div>
+    <p style="font-size:11px;color:#6b6b6b;margin-bottom:4px"><%= sg.action %></p>
+    <div style="display:flex;gap:14px;font-size:10px">
+      <span style="color:#999">Costo: <strong><%= sg.cost %></strong></span>
+      <span style="color:#16a34a">Revalorizacion: <strong>+$<%= fmt(sg.valueIncrease) %> (<%= sg.impactPct %>)</strong></span>
+    </div>
+  </div>
+  <% }) %>
 </div>
 <% } %>
 

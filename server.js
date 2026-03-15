@@ -43,6 +43,156 @@ function estimateValue(neighborhood, m2, typology) {
   return { low: Math.round(basePrice * 0.88), mid: Math.round(basePrice), high: Math.round(basePrice * 1.15), pricePerM2: typo.pricePerM2 };
 }
 
+// Condition quiz adjustments — each answer shifts the estimate by a percentage
+const conditionAdjustments = {
+  buildingAge: { '0-5': 5, '5-15': 2, '15-30': 0, '30-50': -4, '50+': -8 },
+  humidity: { none: 0, mild: -3, moderate: -7, severe: -12 },
+  gasReplaced: { yes: 1, no: -4, unknown: -2 },
+  kitchen: { excellent: 4, good: 1, fair: -2, needs_renovation: -6 },
+  bathroom: { excellent: 3, good: 1, fair: -2, needs_renovation: -5 },
+  floors: { excellent: 2, good: 0, fair: -2, needs_renovation: -4 },
+  naturalLight: { abundant: 3, good: 1, limited: -2, poor: -5 },
+  maintenance: { excellent: 4, good: 1, fair: -3, poor: -7 }
+};
+
+function applyConditionQuiz(estimate, quiz) {
+  if (!quiz || Object.keys(quiz).length === 0) return { estimate, totalAdj: 0, adjustments: [] };
+  let totalAdj = 0;
+  const adjustments = [];
+  for (const [key, value] of Object.entries(quiz)) {
+    if (conditionAdjustments[key] && conditionAdjustments[key][value] !== undefined) {
+      const adj = conditionAdjustments[key][value];
+      totalAdj += adj;
+      adjustments.push({ factor: key, value, adjustment: adj });
+    }
+  }
+  const factor = 1 + (totalAdj / 100);
+  return {
+    estimate: {
+      ...estimate,
+      mid: Math.round(estimate.mid * factor),
+      low: Math.round(estimate.low * factor),
+      high: Math.round(estimate.high * factor)
+    },
+    totalAdj,
+    adjustments
+  };
+}
+
+// Generate improvement suggestions based on quiz answers
+function generateSuggestions(quiz, estimate) {
+  if (!quiz || Object.keys(quiz).length === 0) return [];
+  const suggestions = [];
+  const mid = estimate.mid;
+
+  if (quiz.humidity === 'moderate' || quiz.humidity === 'severe') {
+    const impact = quiz.humidity === 'severe' ? 10 : 5;
+    suggestions.push({
+      issue: 'Humedad ' + (quiz.humidity === 'severe' ? 'severa' : 'moderada'),
+      action: 'Reparar filtraciones, aplicar tratamiento antihumedad y repintar paredes afectadas',
+      cost: quiz.humidity === 'severe' ? '$800 - $2,500 USD' : '$300 - $800 USD',
+      valueIncrease: Math.round(mid * impact / 100),
+      impactPct: '+' + impact + '%',
+      priority: 'alta'
+    });
+  }
+
+  if (quiz.gasReplaced === 'no') {
+    suggestions.push({
+      issue: 'Instalacion de gas sin reemplazar',
+      action: 'Reemplazar canerias de gas y obtener certificado de instalacion (obligatorio para escriturar)',
+      cost: '$500 - $1,200 USD',
+      valueIncrease: Math.round(mid * 4 / 100),
+      impactPct: '+4%',
+      priority: 'alta'
+    });
+  }
+
+  if (quiz.kitchen === 'needs_renovation' || quiz.kitchen === 'fair') {
+    const impact = quiz.kitchen === 'needs_renovation' ? 8 : 4;
+    suggestions.push({
+      issue: 'Cocina ' + (quiz.kitchen === 'needs_renovation' ? 'necesita renovacion' : 'en condicion regular'),
+      action: quiz.kitchen === 'needs_renovation'
+        ? 'Renovacion completa: mesada, bajo mesada, griferias y revestimiento'
+        : 'Pintar muebles, cambiar griferias y actualizar iluminacion',
+      cost: quiz.kitchen === 'needs_renovation' ? '$2,000 - $5,000 USD' : '$500 - $1,500 USD',
+      valueIncrease: Math.round(mid * impact / 100),
+      impactPct: '+' + impact + '%',
+      priority: quiz.kitchen === 'needs_renovation' ? 'alta' : 'media'
+    });
+  }
+
+  if (quiz.bathroom === 'needs_renovation' || quiz.bathroom === 'fair') {
+    const impact = quiz.bathroom === 'needs_renovation' ? 7 : 3;
+    suggestions.push({
+      issue: 'Bano ' + (quiz.bathroom === 'needs_renovation' ? 'necesita renovacion' : 'en condicion regular'),
+      action: quiz.bathroom === 'needs_renovation'
+        ? 'Renovacion completa: sanitarios, griferias, revestimientos y vanitory'
+        : 'Actualizar griferias, re-sellar juntas y mejorar iluminacion',
+      cost: quiz.bathroom === 'needs_renovation' ? '$1,500 - $4,000 USD' : '$300 - $800 USD',
+      valueIncrease: Math.round(mid * impact / 100),
+      impactPct: '+' + impact + '%',
+      priority: quiz.bathroom === 'needs_renovation' ? 'alta' : 'media'
+    });
+  }
+
+  if (quiz.floors === 'needs_renovation' || quiz.floors === 'fair') {
+    const impact = quiz.floors === 'needs_renovation' ? 5 : 2;
+    suggestions.push({
+      issue: 'Pisos ' + (quiz.floors === 'needs_renovation' ? 'necesitan renovacion' : 'en condicion regular'),
+      action: quiz.floors === 'needs_renovation'
+        ? 'Pulir y plastificar pisos de madera, o reemplazar con porcelanato'
+        : 'Pulir pisos existentes y reparar zonas danadas',
+      cost: quiz.floors === 'needs_renovation' ? '$1,000 - $3,000 USD' : '$400 - $1,000 USD',
+      valueIncrease: Math.round(mid * impact / 100),
+      impactPct: '+' + impact + '%',
+      priority: 'media'
+    });
+  }
+
+  if (quiz.naturalLight === 'limited' || quiz.naturalLight === 'poor') {
+    suggestions.push({
+      issue: 'Luz natural ' + (quiz.naturalLight === 'poor' ? 'pobre' : 'limitada'),
+      action: 'Pintar paredes en colores claros, agregar espejos estrategicos, mejorar iluminacion LED',
+      cost: '$200 - $600 USD',
+      valueIncrease: Math.round(mid * 2 / 100),
+      impactPct: '+2%',
+      priority: 'baja'
+    });
+  }
+
+  if (quiz.maintenance === 'poor' || quiz.maintenance === 'fair') {
+    const impact = quiz.maintenance === 'poor' ? 6 : 3;
+    suggestions.push({
+      issue: 'Mantenimiento general ' + (quiz.maintenance === 'poor' ? 'deficiente' : 'regular'),
+      action: 'Pintura completa, reparar aberturas, sellar ventanas, arreglar detalles visibles',
+      cost: quiz.maintenance === 'poor' ? '$1,000 - $2,500 USD' : '$400 - $1,000 USD',
+      valueIncrease: Math.round(mid * impact / 100),
+      impactPct: '+' + impact + '%',
+      priority: quiz.maintenance === 'poor' ? 'alta' : 'media'
+    });
+  }
+
+  // Sort by priority
+  const priorityOrder = { alta: 0, media: 1, baja: 2 };
+  suggestions.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+  return suggestions;
+}
+
+// Calculate "real market value" — ~20% below listing price
+// Context: 160K properties listed, only 6% sell. People list at sentimental value.
+function calculateRealValue(estimate) {
+  const listingDiscount = 0.80; // real market ~20% below listing
+  return {
+    listingPrice: estimate.mid,
+    realValue: Math.round(estimate.mid * listingDiscount),
+    realLow: Math.round(estimate.low * listingDiscount),
+    realHigh: Math.round(estimate.high * listingDiscount),
+    discount: 20,
+    context: 'De las 160,000 propiedades publicadas en Buenos Aires, solo el 6% se vende. El precio real de mercado esta tipicamente 15-20% por debajo del precio de publicacion. Este es el precio al que los compradores realmente cierran.'
+  };
+}
+
 const byPrice = [...neighborhoods].sort((a, b) => b.pricePerM2.avg - a.pricePerM2.avg);
 const byGrowth = [...neighborhoods].sort((a, b) => b.pricePerM2.trend - a.pricePerM2.trend);
 
@@ -241,7 +391,20 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
     if (!n) return res.status(400).json({ error: 'Barrio no encontrado' });
 
     const sqm = parseInt(m2) || 40;
-    const estimate = estimateValue(n, sqm, typology || 'dosAmbientes');
+    let estimate = estimateValue(n, sqm, typology || 'dosAmbientes');
+
+    // Parse condition quiz answers
+    const quiz = {};
+    const quizFields = ['buildingAge', 'humidity', 'gasReplaced', 'kitchen', 'bathroom', 'floors', 'naturalLight', 'maintenance'];
+    for (const field of quizFields) {
+      if (req.body[field]) quiz[field] = req.body[field];
+    }
+
+    // Apply condition quiz adjustments
+    const quizResult = applyConditionQuiz(estimate, quiz);
+    estimate = quizResult.estimate;
+    const conditionAdj = quizResult.totalAdj;
+    const conditionDetails = quizResult.adjustments;
 
     // If photos provided and we have API key, do AI analysis
     let aiAnalysis = null;
@@ -264,6 +427,12 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
     // Generate strategy analysis (always, no AI needed)
     const strategy = generateStrategy(n, sqm, estimate, typology || 'dosAmbientes');
 
+    // Generate real market value (listing price vs actual transaction price)
+    const realValue = calculateRealValue(estimate);
+
+    // Generate improvement suggestions based on condition quiz
+    const suggestions = generateSuggestions(quiz, estimate);
+
     // Teaser: show enough to hook, hide the good stuff
     const teaser = {
       neighborhood: n.name,
@@ -277,7 +446,11 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
       demandScore: strategy.demandScore,
       timeToSell: strategy.timeToSell,
       sellRecommendation: strategy.sellVsWait.recommendation,
-      hasPhotos: !!(aiAnalysis)
+      hasPhotos: !!(aiAnalysis),
+      hasQuiz: Object.keys(quiz).length > 0,
+      conditionAdj,
+      realValue: realValue.realValue,
+      realValueContext: realValue.context
     };
 
     // If AI analyzed, add teaser bits
@@ -302,6 +475,10 @@ app.post('/api/evaluate', upload.array('photos', 5), async (req, res) => {
       photographyTips: aiAnalysis ? aiAnalysis.photographyTips : null,
       stagingAdvice: aiAnalysis ? aiAnalysis.stagingAdvice : null,
       strategy,
+      realValue,
+      suggestions,
+      conditionDetails,
+      quiz,
       typologyBreakdown: n.typology,
       inventory: n.inventory,
       subzones: n.subzones,

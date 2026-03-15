@@ -504,6 +504,10 @@ a:hover { color: var(--accent-light); }
   .enterprise-features { justify-content: center; }
 }
 
+/* Quiz grid */
+.quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 768px) { .quiz-grid { grid-template-columns: 1fr; } }
+
 @media print { .nav, .footer, .btn, .gate-section, .premium-teaser { display: none; } }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
