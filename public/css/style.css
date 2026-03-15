@@ -508,7 +508,12 @@ a:hover { color: var(--accent-light); }
 .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 768px) { .quiz-grid { grid-template-columns: 1fr; } }
 
-@media print { .nav, .footer, .btn, .gate-section, .premium-teaser { display: none; } }
+/* WhatsApp FAB */
+.wa-fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 90; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.wa-fab:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+@media (max-width: 768px) { .wa-fab { bottom: 16px; right: 16px; width: 52px; height: 52px; } }
+
+@media print { .nav, .footer, .btn, .gate-section, .premium-teaser, .wa-fab { display: none; } }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
